@@ -5,37 +5,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-//# include "r8lib.h"
-
-int i4_min(int i1, int i2)
-
-/******************************************************************************/
-/*
-  Purpose:
-
-    I4_MIN returns the smaller of two I4's.
-
-  Licensing:
-
-    This code is distributed under the GNU LGPL license.
-
-  Modified:
-
-    29 August 2006
-
-  Author:
-
-    John Burkardt
-
-  Parameters:
-
-    Input, int I1, I2, two integers to be compared.
-
-    Output, int I4_MIN, the smaller of I1 and I2.
-*/
-{
-  return (i1 < i2) ? i1 : i2;
-}
 
 double r8_epsilon(void)
 
@@ -72,66 +41,6 @@ double r8_epsilon(void)
 {
   const double value = 2.220446049250313E-016;
   return value;
-}
-
-double r8_max(double x, double y)
-
-/******************************************************************************/
-/*
-  Purpose:
-
-    R8_MAX returns the maximum of two R8's.
-
-  Licensing:
-
-    This code is distributed under the GNU LGPL license.
-
-  Modified:
-
-    07 May 2006
-
-  Author:
-
-    John Burkardt
-
-  Parameters:
-
-    Input, double X, Y, the quantities to compare.
-
-    Output, double R8_MAX, the maximum of X and Y.
-*/
-{
-  return (y < x) ? x : y;
-}
-
-double r8_abs(double x)
-
-/******************************************************************************/
-/*
-  Purpose:
-
-    R8_ABS returns the absolute value of an R8.
-
-  Licensing:
-
-    This code is distributed under the GNU LGPL license.
-
-  Modified:
-
-    07 May 2006
-
-  Author:
-
-    John Burkardt
-
-  Parameters:
-
-    Input, double X, the quantity whose absolute value is desired.
-
-    Output, double R8_ABS, the absolute value of X.
-*/
-{
-  return (x < 0.0) ? -x : x;
 }
 
 double r8_sign(double x)
@@ -200,11 +109,11 @@ double r8mat_amax(int m, int n, double a[])
     Output, double R8MAT_AMAX, the maximum absolute value entry of A.
 */
 {
-  double value = r8_abs(a[0 + 0 * m]);
+  double value = abs(a[0 + 0 * m]);
   for (int j = 0; j < n; j++) {
     for (int i = 0; i < m; i++) {
-      if (value < r8_abs(a[i + j * m]))
-        value = r8_abs(a[i + j * m]);
+      if (value < abs(a[i + j * m]))
+        value = abs(a[i + j * m]);
     }
   }
   return value;
@@ -484,13 +393,13 @@ double dnrm2(int n, double x[], int incx)
   if (n < 1 || incx < 1)
     norm = 0.0;
   else if (n == 1)
-    norm = r8_abs(x[0]);
+    norm = abs(x[0]);
   else {
     double scale = 0.0, ssq = 1.0;
     int ix = 0;
     for (int i = 0; i < n; i++) {
       if (x[ix] != 0.0) {
-        double absxi = r8_abs(x[ix]);
+        double absxi = abs(x[ix]);
         if (scale < absxi) {
           ssq = 1.0 + ssq * (scale / absxi) * (scale / absxi);
           scale = absxi;
@@ -590,9 +499,9 @@ void dqrank(double a[], int lda, int m, int n, double tol, int* kr,
   dqrdc(a, lda, m, n, qraux, jpvt, work, job);
 
   *kr = 0;
-  int k = i4_min(m, n);
+  int k = min(m, n);
   for (int j = 0; j < k; j++) {
-    if (r8_abs(a[j + j * lda]) <= tol * r8_abs(a[0 + 0 * lda]))
+    if (abs(a[j + j * lda]) <= tol * abs(a[0 + 0 * lda]))
       return;
     *kr = j + 1;
   }
@@ -726,7 +635,7 @@ void dqrdc(double a[], int lda, int n, int p, double qraux[], int jpvt[],
   /*
     Perform the Householder reduction of A.
   */
-  lup = i4_min(n, p);
+  lup = min(n, p);
   for (int l = 1; l <= lup; l++) {
     /*
       Bring the column of largest norm into the pivot position.
@@ -769,8 +678,8 @@ void dqrdc(double a[], int lda, int n, int p, double qraux[], int jpvt[],
           daxpy(n - l + 1, t, a + l - 1 + (l - 1)*lda, 1, a + l - 1 + (j - 1)*lda, 1);
           if (pl <= j && j <= pu) {
             if (qraux[j - 1] != 0.0) {
-              tt = 1.0 - pow(r8_abs(a[l - 1 + (j - 1) * lda]) / qraux[j - 1], 2);
-              tt = r8_max(tt, 0.0);
+              tt = 1.0 - pow(abs(a[l - 1 + (j - 1) * lda]) / qraux[j - 1], 2);
+              tt = max(tt, 0.0);
               t = tt;
               tt = 1.0 + 0.05 * tt * pow(qraux[j - 1] / work[j - 1], 2);
               if (tt != 1.0)
@@ -1213,7 +1122,7 @@ int dqrsl(double a[], int lda, int n, int k, double qraux[], double y[],
   cb   = ((job %  1000) / 100 != 0);
   cr   = ((job %   100) /  10 != 0);
   cab  = ((job %    10)       != 0);
-  ju = i4_min(k, n - 1);
+  ju = min(k, n - 1);
 
   /*
     Special action when N = 1.
