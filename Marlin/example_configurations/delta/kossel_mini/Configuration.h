@@ -343,6 +343,14 @@ Here are some standard links for getting your machine calibrated:
 
   // Print surface diameter/2 minus unreachable space (avoid collisions with vertical towers).
   #define DELTA_PRINTABLE_RADIUS 90
+  
+  #define DELTA_CLIP_RADIUS (
+                              min( DELTA_PRINTABLE_RADIUS, \
+                                min( DELTA_DIAGONAL_ROD + DELTA_EFFECTOR_OFFSET + DELTA_CARRIAGE_OFFSET - DELTA_SMOOTH_ROD_OFFSET, \
+                                     DELTA_SMOOTH_ROD_OFFSET - DELTA_CARRIAGE_OFFSET - DELTA_EFFECTOR_OFFSET\
+                                   )\
+                                 )\
+                            )
 
 #endif
 
