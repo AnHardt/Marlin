@@ -815,7 +815,7 @@ static void _lcd_move(const char* name, AxisEnum axis, int min, int max) {
 }
 #if ENABLED(DELTA)
   static float delta_clip_radius_2 =  DELTA_CLIP_RADIUS * DELTA_CLIP_RADIUS;
-  static int delta_clip( float a ) { sqrt(delta_clip_radius_2 - a*a); }
+  static int delta_clip( float a ) { return sqrt(delta_clip_radius_2 - a*a); }
   static void lcd_move_x() { _lcd_move(PSTR(MSG_MOVE_X), X_AXIS, max(X_MIN_POS, -delta_clip(current_position[Y_AXIS])), min(X_MAX_POS, delta_clip(current_position[Y_AXIS]))); }
   static void lcd_move_y() { _lcd_move(PSTR(MSG_MOVE_Y), Y_AXIS, max(Y_MIN_POS, -delta_clip(current_position[X_AXIS])), min(Y_MAX_POS, delta_clip(current_position[X_AXIS]))); }
 #else
