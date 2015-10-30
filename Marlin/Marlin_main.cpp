@@ -1472,7 +1472,7 @@ static void setup_for_endstop_move() {
             destination[Z_AXIS] = Z_PROBE_ALLEN_KEY_DEPLOY_3_Z;
 
           prepare_move_raw();
-
+gcode_M114();
         #endif
       }
 
@@ -1480,9 +1480,9 @@ static void setup_for_endstop_move() {
       destination[X_AXIS] = destination[X_AXIS] * 0.75;
       destination[Y_AXIS] = destination[Y_AXIS] * 0.75;
       prepare_move_raw(); // this will also set_current_to_destination
-
+gcode_M114();
       st_synchronize();
-
+gcode_M114();
       #if ENABLED(Z_MIN_PROBE_ENDSTOP)
         z_probe_endstop = (READ(Z_MIN_PROBE_PIN) != Z_MIN_PROBE_ENDSTOP_INVERTING);
         if (z_probe_endstop)
@@ -2980,8 +2980,9 @@ inline void gcode_G28() {
             act = ProbeStow;
           else
             act = ProbeStay;
-
+gcode_M114();
           measured_z = probe_pt(xProbe, yProbe, z_before, act, verbose_level);
+gcode_M114();
 
           #if DISABLED(DELTA)
             mean += measured_z;
