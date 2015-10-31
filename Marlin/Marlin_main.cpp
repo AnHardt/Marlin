@@ -51,6 +51,8 @@
 #include "math.h"
 #include "buzzer.h"
 
+inline void gcode_M114();
+
 #if ENABLED(USE_WATCHDOG)
   #include "watchdog.h"
 #endif
