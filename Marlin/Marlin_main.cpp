@@ -6270,7 +6270,15 @@ void ok_to_send() {
   #endif
   SERIAL_PROTOCOLPGM(MSG_OK);
   #if ENABLED(ADVANCED_OK)
-    SERIAL_PROTOCOLPGM(" N"); SERIAL_PROTOCOL(gcode_LastN);
+    char * p;
+    if (*command_queue[cmd_queue_index_r] == 'N') {
+      p = strchr(command_queue[cmd_queue_index_r], ' ');
+      *p = '\0';
+      SERIAL_PROTOCOLPGM(" ");
+      SERIAL_PROTOCOL(command_queue[cmd_queue_index_r]);
+      *p = ' ';
+    }
+    //SERIAL_PROTOCOLPGM(" N"); SERIAL_PROTOCOL(gcode_LastN);
     SERIAL_PROTOCOLPGM(" P"); SERIAL_PROTOCOL(int(BLOCK_BUFFER_SIZE - movesplanned() - 1));
     SERIAL_PROTOCOLPGM(" B"); SERIAL_PROTOCOL(BUFSIZE - commands_in_queue);
     SERIAL_PROTOCOLPGM(" R"); SERIAL_PROTOCOL(RX_BUFFER_SIZE - MYSERIAL.available());
