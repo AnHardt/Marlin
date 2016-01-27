@@ -903,6 +903,9 @@ void get_command() {
       // If command was e-stop process now
       if (strcmp(command, "M112") == 0) kill(PSTR(MSG_KILLED));
 
+      // early OK - ok when protocol checking is done / syntax testing still pending
+      ok_to_send();
+
       cmd_queue_index_w = (cmd_queue_index_w + 1) % BUFSIZE;
       commands_in_queue += 1;
 
@@ -3889,7 +3892,7 @@ inline void gcode_M105() {
   if (setTargetedHotend(105)) return;
 
   #if HAS_TEMP_0 || HAS_TEMP_BED || ENABLED(HEATER_0_USES_MAX6675)
-    SERIAL_PROTOCOLPGM(MSG_OK);
+    //SERIAL_PROTOCOLPGM(MSG_OK);
     print_heaterstates();
   #else // !HAS_TEMP_0 && !HAS_TEMP_BED
     SERIAL_ERROR_START;
@@ -4763,7 +4766,8 @@ inline void gcode_M226() {
       }
     }
     else if (servo_index >= 0) {
-      SERIAL_PROTOCOL(MSG_OK);
+      //SERIAL_PROTOCOL(MSG_OK);
+      SERIAL_ECHO_START;
       SERIAL_PROTOCOL(" Servo ");
       SERIAL_PROTOCOL(servo_index);
       SERIAL_PROTOCOL(": ");
@@ -4819,7 +4823,8 @@ inline void gcode_M226() {
       #endif
 
       updatePID();
-      SERIAL_PROTOCOL(MSG_OK);
+      SERIAL_ECHO_START;
+      //SERIAL_PROTOCOL(MSG_OK);
       #if ENABLED(PID_PARAMS_PER_EXTRUDER)
         SERIAL_PROTOCOL(" e:"); // specify extruder in serial output
         SERIAL_PROTOCOL(e);
@@ -4853,7 +4858,8 @@ inline void gcode_M226() {
     if (code_seen('D')) bedKd = scalePID_d(code_value());
 
     updatePID();
-    SERIAL_PROTOCOL(MSG_OK);
+    SERIAL_ECHO_START;
+    //SERIAL_PROTOCOL(MSG_OK);
     SERIAL_PROTOCOL(" p:");
     SERIAL_PROTOCOL(bedKp);
     SERIAL_PROTOCOL(" i:");
@@ -5292,7 +5298,8 @@ inline void gcode_M503() {
       float value = code_value();
       if (Z_PROBE_OFFSET_RANGE_MIN <= value && value <= Z_PROBE_OFFSET_RANGE_MAX) {
         zprobe_zoffset = value;
-        SERIAL_ECHOPGM(MSG_OK);
+        SERIAL_ECHO_START;
+        //SERIAL_ECHOPGM(MSG_OK);
       }
       else {
         SERIAL_ECHOPGM(MSG_Z_MIN);
@@ -6252,7 +6259,7 @@ ExitUnknownCommand:
   // Still unknown command? Throw an error
   if (!code_is_good) unknown_command_error();
 
-  ok_to_send();
+  //ok_to_send();
 }
 
 void FlushSerialRequestResend() {
@@ -6260,9 +6267,37 @@ void FlushSerialRequestResend() {
   MYSERIAL.flush();
   SERIAL_PROTOCOLPGM(MSG_RESEND);
   SERIAL_PROTOCOLLN(gcode_LastN + 1);
-  ok_to_send();
+  //ok_to_send();
 }
 
+void ok_to_send() {
+  refresh_cmd_timeout();
+  #if ENABLED(SDSUPPORT)
+    if (fromsd[cmd_queue_index_r]) return;
+  #endif
+  #if ENABLED(ADVANCED_OK)
+    char * p;
+    if (*command_queue[cmd_queue_index_w] == 'N') {
+      SERIAL_PROTOCOLPGM(MSG_OK);
+      p = strchr(command_queue[cmd_queue_index_w], ' ');
+      *p = '\0';
+      SERIAL_PROTOCOLPGM(" ");
+      SERIAL_PROTOCOL(command_queue[cmd_queue_index_w]);
+      *p = ' ';
+    }
+    else
+    {
+      SERIAL_ECHO_START;
+    }
+    //SERIAL_PROTOCOLPGM(" N"); SERIAL_PROTOCOL(gcode_LastN);
+    SERIAL_PROTOCOLPGM(" P"); SERIAL_PROTOCOL(int(BLOCK_BUFFER_SIZE - movesplanned() - 1));
+    SERIAL_PROTOCOLPGM(" B"); SERIAL_PROTOCOL(BUFSIZE - commands_in_queue);
+    SERIAL_PROTOCOLPGM(" R"); SERIAL_PROTOCOL(RX_BUFFER_SIZE - MYSERIAL.available());
+    SERIAL_PROTOCOLPGM(" \""); SERIAL_PROTOCOL(command_queue[cmd_queue_index_w]); SERIAL_PROTOCOLPGM("\" ");
+  #endif
+  SERIAL_EOL;
+}
+/*
 void ok_to_send() {
   refresh_cmd_timeout();
   #if ENABLED(SDSUPPORT)
@@ -6290,7 +6325,7 @@ void ok_to_send() {
   #endif
   SERIAL_EOL;
 }
-
+*/
 void clamp_to_software_endstops(float target[3]) {
   if (min_software_endstops) {
     NOLESS(target[X_AXIS], min_pos[X_AXIS]);
