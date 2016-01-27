@@ -117,6 +117,10 @@ class MarlinSerial { //: public Stream
           rx_buffer.buffer[rx_buffer.head] = c;
           rx_buffer.head = i;
         }
+        else 
+        {
+          ser_chars_rejected = true;
+        }
       }
     }
 
