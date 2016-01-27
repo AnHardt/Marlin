@@ -6273,6 +6273,8 @@ void ok_to_send() {
     SERIAL_PROTOCOLPGM(" N"); SERIAL_PROTOCOL(gcode_LastN);
     SERIAL_PROTOCOLPGM(" P"); SERIAL_PROTOCOL(int(BLOCK_BUFFER_SIZE - movesplanned() - 1));
     SERIAL_PROTOCOLPGM(" B"); SERIAL_PROTOCOL(BUFSIZE - commands_in_queue);
+    SERIAL_PROTOCOLPGM(" R"); SERIAL_PROTOCOL(RX_BUFFER_SIZE - MYSERIAL.available());
+    SERIAL_PROTOCOLPGM(" \""); SERIAL_PROTOCOL(command_queue[cmd_queue_index_r]); SERIAL_PROTOCOLPGM("\" ");
   #endif
   SERIAL_EOL;
 }
