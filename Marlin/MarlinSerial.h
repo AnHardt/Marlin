@@ -78,6 +78,8 @@ struct ring_buffer {
   int tail;
 };
 
+extern bool ser_chars_rejected;
+
 #if UART_PRESENT(SERIAL_PORT)
   extern ring_buffer rx_buffer;
 #endif

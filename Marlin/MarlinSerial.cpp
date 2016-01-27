@@ -32,6 +32,8 @@
   ring_buffer rx_buffer  =  { { 0 }, 0, 0 };
 #endif
 
+bool ser_chars_rejected = false;
+
 FORCE_INLINE void store_char(unsigned char c) {
   int i = (unsigned int)(rx_buffer.head + 1) % RX_BUFFER_SIZE;
 
@@ -42,6 +44,10 @@ FORCE_INLINE void store_char(unsigned char c) {
   if (i != rx_buffer.tail) {
     rx_buffer.buffer[rx_buffer.head] = c;
     rx_buffer.head = i;
+  } 
+  else 
+  {
+    ser_chars_rejected = true;
   }
 }
 

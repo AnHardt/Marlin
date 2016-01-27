@@ -733,6 +733,13 @@ void setup() {
  *  - Call LCD update
  */
 void loop() {
+  if ( ser_chars_rejected ) {
+    SERIAL_ERROR_START;
+    SERIAL_ECHOLNPGM("Serial: incoming chars rejected - ring buffer full");
+    //kill(PSTR("ERR: ring buffer full")); 
+    ser_chars_rejected = false;
+  }
+
   if (commands_in_queue < BUFSIZE - 1) get_command();
 
   #if ENABLED(SDSUPPORT)
