@@ -6268,15 +6268,19 @@ void ok_to_send() {
   #if ENABLED(SDSUPPORT)
     if (fromsd[cmd_queue_index_r]) return;
   #endif
-  SERIAL_PROTOCOLPGM(MSG_OK);
   #if ENABLED(ADVANCED_OK)
     char * p;
     if (*command_queue[cmd_queue_index_r] == 'N') {
+      SERIAL_PROTOCOLPGM(MSG_OK);
       p = strchr(command_queue[cmd_queue_index_r], ' ');
       *p = '\0';
       SERIAL_PROTOCOLPGM(" ");
       SERIAL_PROTOCOL(command_queue[cmd_queue_index_r]);
       *p = ' ';
+    }
+    else
+    {
+      SERIAL_ECHO_START;
     }
     //SERIAL_PROTOCOLPGM(" N"); SERIAL_PROTOCOL(gcode_LastN);
     SERIAL_PROTOCOLPGM(" P"); SERIAL_PROTOCOL(int(BLOCK_BUFFER_SIZE - movesplanned() - 1));
