@@ -423,7 +423,7 @@ const unsigned int dropsegments = 5; //everything with less than this number of 
 //#define NO_TIMEOUTS 1000 // Milliseconds
 
 // Some clients will have this feature soon. This could make the NO_TIMEOUTS unnecessary.
-//#define ADVANCED_OK
+#define ADVANCED_OK
 
 // @section fwretract
 
