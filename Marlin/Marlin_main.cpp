@@ -785,7 +785,8 @@ void loop() {
 void gcode_line_error(const char* err, bool doFlush = true) {
   SERIAL_ERROR_START;
   serialprintPGM(err);
-  SERIAL_ERRORLN(gcode_LastN);
+  SERIAL_ERROR(gcode_LastN);
+  SERIAL_PROTOCOLPGM(" \""); SERIAL_PROTOCOL(command_queue[cmd_queue_index_w]); SERIAL_PROTOCOLPGM("\"\n");
   //Serial.println(gcode_N);
   if (doFlush) FlushSerialRequestResend();
   serial_count = 0;
