@@ -736,7 +736,7 @@ void loop() {
   if ( ser_chars_rejected ) {
     SERIAL_ERROR_START;
     SERIAL_ECHOLNPGM("Serial: incoming chars rejected - ring buffer full");
-    //kill(PSTR("ERR: ring buffer full")); 
+    kill(PSTR("ERR: ring buffer full"));
     ser_chars_rejected = false;
   }
 
@@ -790,6 +790,8 @@ void gcode_line_error(const char* err, bool doFlush = true) {
   //Serial.println(gcode_N);
   if (doFlush) FlushSerialRequestResend();
   serial_count = 0;
+  kill(PSTR("ERR: Protocol"));
+
 }
 
 /**
