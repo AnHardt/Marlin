@@ -35,8 +35,8 @@
 bool ser_chars_rejected = false;
 
 FORCE_INLINE void store_char(unsigned char c) {
-  int i = (unsigned int)(rx_buffer.head + 1) % RX_BUFFER_SIZE;
-
+  unsigned int i = (unsigned int)(rx_buffer.head + 1);
+  if (i == RX_BUFFER_SIZE) i = 0;
   // if we should be storing the received character into the location
   // just before the tail (meaning that the head would advance to the
   // current location of the tail), we're about to overflow the buffer
@@ -121,8 +121,10 @@ int MarlinSerial::read(void) {
     return -1;
   }
   else {
-    unsigned char c = rx_buffer.buffer[rx_buffer.tail];
-    rx_buffer.tail = (unsigned int)(rx_buffer.tail + 1) % RX_BUFFER_SIZE;
+    unsigned int i = (unsigned int)(rx_buffer.tail);
+    unsigned char c = rx_buffer.buffer[i++];
+    if (i == RX_BUFFER_SIZE) i = 0;
+    rx_buffer.tail = i;
     return c;
   }
 }

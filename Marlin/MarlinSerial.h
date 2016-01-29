@@ -95,7 +95,8 @@ class MarlinSerial { //: public Stream
     void flush(void);
 
     FORCE_INLINE int available(void) {
-      return (unsigned int)(RX_BUFFER_SIZE + rx_buffer.head - rx_buffer.tail) % RX_BUFFER_SIZE;
+      unsigned int i = (unsigned int)(RX_BUFFER_SIZE + rx_buffer.head - rx_buffer.tail);
+      return (i < RX_BUFFER_SIZE) ? i : i - RX_BUFFER_SIZE;
     }
 
     FORCE_INLINE void write(uint8_t c) {
@@ -107,8 +108,8 @@ class MarlinSerial { //: public Stream
     FORCE_INLINE void checkRx(void) {
       if (TEST(M_UCSRxA, M_RXCx)) {
         unsigned char c  =  M_UDRx;
-        int i = (unsigned int)(rx_buffer.head + 1) % RX_BUFFER_SIZE;
-
+        unsigned int i = (unsigned int)(rx_buffer.head + 1);
+        if (i == RX_BUFFER_SIZE) i = 0;
         // if we should be storing the received character into the location
         // just before the tail (meaning that the head would advance to the
         // current location of the tail), we're about to overflow the buffer

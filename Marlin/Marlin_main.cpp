@@ -5901,7 +5901,8 @@ void process_next_command() {
 
       case 105: // M105: Read current temperature
         gcode_M105();
-        return; // "ok" already printed
+        break;
+        //return; // "ok" already printed
 
       case 109: // M109: Wait for temperature
         gcode_M109();
@@ -6280,18 +6281,20 @@ void ok_to_send() {
   #endif
   #if ENABLED(ADVANCED_OK)
     char * p;
+    SERIAL_PROTOCOLPGM(MSG_OK);
     if (*command_queue[cmd_queue_index_w] == 'N') {
-      SERIAL_PROTOCOLPGM(MSG_OK);
       p = strchr(command_queue[cmd_queue_index_w], ' ');
       *p = '\0';
       SERIAL_PROTOCOLPGM(" ");
       SERIAL_PROTOCOL(command_queue[cmd_queue_index_w]);
       *p = ' ';
     }
+/*
     else
     {
       SERIAL_ECHO_START;
     }
+*/
     //SERIAL_PROTOCOLPGM(" N"); SERIAL_PROTOCOL(gcode_LastN);
     SERIAL_PROTOCOLPGM(" P"); SERIAL_PROTOCOL(int(BLOCK_BUFFER_SIZE - movesplanned() - 1));
     SERIAL_PROTOCOLPGM(" B"); SERIAL_PROTOCOL(BUFSIZE - commands_in_queue);
