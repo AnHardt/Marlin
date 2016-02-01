@@ -762,8 +762,8 @@ void loop() {
           card.write_command(command);
           if (card.logging)
             process_next_command(); // The card is saving because it's logging
-          else
-            SERIAL_PROTOCOLLNPGM(MSG_OK);
+          //else
+            //SERIAL_PROTOCOLLNPGM(MSG_OK);
         }
       }
       else
