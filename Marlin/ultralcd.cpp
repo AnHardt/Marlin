@@ -945,10 +945,8 @@ void lcd_cooldown() {
     }
 
     // Update on first display, then only on updates to Z position
-    if (lcdDrawUpdate) {
-      float v = current_position[Z_AXIS] - MESH_HOME_SEARCH_Z;
-      lcd_implementation_drawedit(PSTR(MSG_MOVE_Z), ftostr43(v + (v < 0 ? -0.0001 : 0.0001), '+'));
-    }
+    float v = current_position[Z_AXIS] - MESH_HOME_SEARCH_Z;
+    lcd_implementation_drawedit(PSTR(MSG_MOVE_Z), ftostr43(v + (v < 0 ? -0.0001 : 0.0001), '+'));
 
     // We want subsequent calls, but don't force redraw
     // Set here so it can be overridden by lcd_return_to_status below
@@ -998,7 +996,7 @@ void lcd_cooldown() {
    *        Move to the first probe position
    */
   static void _lcd_level_bed_homing_done() {
-    if (lcdDrawUpdate) lcd_implementation_drawedit(PSTR(MSG_LEVEL_BED_WAITING), NULL);
+    lcd_implementation_drawedit(PSTR(MSG_LEVEL_BED_WAITING), NULL);
     lcdDrawUpdate = LCDVIEW_CALL_NO_REDRAW;
     if (mbl_wait_for_move) return;
     if (LCD_CLICKED) {
@@ -1014,9 +1012,9 @@ void lcd_cooldown() {
    * 3. MBL Display "Hoing XYZ" - Wait for homing to finish
    */
   static void _lcd_level_bed_homing() {
-    if (lcdDrawUpdate) lcd_implementation_drawedit(PSTR(MSG_LEVEL_BED_HOMING), NULL);
+    lcd_implementation_drawedit(PSTR(MSG_LEVEL_BED_HOMING), NULL);
     lcdDrawUpdate = LCDVIEW_CALL_NO_REDRAW;
-    if (axis_known_position[X_AXIS] && axis_known_position[Y_AXIS] && axis_known_position[Z_AXIS])
+    if (axis_homed[X_AXIS] && axis_homed[Y_AXIS] && axis_homed[Z_AXIS])
       lcd_goto_menu(_lcd_level_bed_homing_done);
   }
 
@@ -1025,7 +1023,7 @@ void lcd_cooldown() {
    */
   static void _lcd_level_bed_continue() {
     defer_return_to_status = true;
-    axis_known_position[X_AXIS] = axis_known_position[Y_AXIS] = axis_known_position[Z_AXIS] = false;
+    axis_homed[X_AXIS] = axis_homed[Y_AXIS] = axis_homed[Z_AXIS] = false;
     mbl.reset();
     enqueue_and_echo_commands_P(PSTR("G28"));
     lcd_goto_menu(_lcd_level_bed_homing);
@@ -1072,7 +1070,7 @@ static void lcd_prepare_menu() {
   // Level Bed
   //
   #if ENABLED(AUTO_BED_LEVELING_FEATURE)
-    if (axis_known_position[X_AXIS] && axis_known_position[Y_AXIS])
+    if (axis_homed[X_AXIS] && axis_homed[Y_AXIS])
       MENU_ITEM(gcode, MSG_LEVEL_BED, PSTR("G29"));
   #elif ENABLED(MANUAL_BED_LEVELING)
     MENU_ITEM(submenu, MSG_LEVEL_BED, lcd_level_bed);
@@ -2217,12 +2215,13 @@ void lcd_update() {
       }
 
       #if ENABLED(DOGLCD)  // Changes due to different driver architecture of the DOGM display
-        bool blink = lcd_blink();
+        static int8_t dblink = 0;
+        dblink = 1 - dblink;
         u8g.firstPage();
         do {
           lcd_setFont(FONT_MENU);
           u8g.setPrintPos(125, 0);
-          u8g.setColorIndex(blink ? 1 : 0); // Set color for the alive dot
+          u8g.setColorIndex(dblink); // Set color for the alive dot
           u8g.drawPixel(127, 63); // draw alive dot
           u8g.setColorIndex(1); // black on white
           (*currentMenu)();
