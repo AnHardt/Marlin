@@ -486,68 +486,6 @@ inline void line_to_current(AxisEnum axis) {
 
 #endif //SDSUPPORT
 
-/**
- *
- * "Main" menu
- *
- */
-
-static void lcd_main_menu() {
-  START_MENU();
-  MENU_ITEM(back, MSG_WATCH);
-  if (movesplanned() || IS_SD_PRINTING) {
-    MENU_ITEM(submenu, MSG_TUNE, lcd_tune_menu);
-  }
-  else {
-    MENU_ITEM(submenu, MSG_PREPARE, lcd_prepare_menu);
-    #if ENABLED(DELTA_CALIBRATION_MENU)
-      MENU_ITEM(submenu, MSG_DELTA_CALIBRATE, lcd_delta_calibrate_menu);
-    #endif
-  }
-  MENU_ITEM(submenu, MSG_CONTROL, lcd_control_menu);
-
-  #if ENABLED(SDSUPPORT)
-    if (card.cardOK) {
-      if (card.isFileOpen()) {
-        if (card.sdprinting)
-          MENU_ITEM(function, MSG_PAUSE_PRINT, lcd_sdcard_pause);
-        else
-          MENU_ITEM(function, MSG_RESUME_PRINT, lcd_sdcard_resume);
-        MENU_ITEM(function, MSG_STOP_PRINT, lcd_sdcard_stop);
-      }
-      else {
-        MENU_ITEM(submenu, MSG_CARD_MENU, lcd_sdcard_menu);
-        #if !PIN_EXISTS(SD_DETECT)
-          MENU_ITEM(gcode, MSG_CNG_SDCARD, PSTR("M21"));  // SD-card changed by user
-        #endif
-      }
-    }
-    else {
-      MENU_ITEM(submenu, MSG_NO_CARD, lcd_sdcard_menu);
-      #if !PIN_EXISTS(SD_DETECT)
-        MENU_ITEM(gcode, MSG_INIT_SDCARD, PSTR("M21")); // Manually initialize the SD-card via user interface
-      #endif
-    }
-  #endif //SDSUPPORT
-
-  END_MENU();
-}
-
-/**
- *
- * "Tune" submenu items
- *
- */
-
-/**
- * Set the home offset based on the current_position
- */
-void lcd_set_home_offsets() {
-  // M428 Command
-  enqueue_and_echo_commands_P(PSTR("M428"));
-  lcd_return_to_status();
-}
-
 #if ENABLED(BABYSTEPPING)
 
   int babysteps_done = 0;
@@ -599,6 +537,83 @@ void lcd_set_home_offsets() {
   static void lcd_babystep_z() { babysteps_done = 0; lcd_goto_menu(_lcd_babystep_z); }
 
 #endif //BABYSTEPPING
+
+/**
+ *
+ * "Main" menu
+ *
+ */
+
+static void lcd_main_menu() {
+  START_MENU();
+  MENU_ITEM(back, MSG_WATCH);
+  if (movesplanned() || IS_SD_PRINTING) {
+    MENU_ITEM(submenu, MSG_TUNE, lcd_tune_menu);
+  }
+  else {
+    MENU_ITEM(submenu, MSG_PREPARE, lcd_prepare_menu);
+    #if ENABLED(DELTA_CALIBRATION_MENU)
+      MENU_ITEM(submenu, MSG_DELTA_CALIBRATE, lcd_delta_calibrate_menu);
+    #endif
+  }
+
+  //
+  // Babystep X:
+  // Babystep Y:
+  // Babystep Z:
+  //
+
+  #if ENABLED(BABYSTEPPING)
+    #if ENABLED(BABYSTEP_XY)
+      MENU_ITEM(submenu, MSG_BABYSTEP_X, lcd_babystep_x);
+      MENU_ITEM(submenu, MSG_BABYSTEP_Y, lcd_babystep_y);
+    #endif //BABYSTEP_XY
+    MENU_ITEM(submenu, MSG_BABYSTEP_Z, lcd_babystep_z);
+  #endif
+
+  MENU_ITEM(submenu, MSG_CONTROL, lcd_control_menu);
+
+  #if ENABLED(SDSUPPORT)
+    if (card.cardOK) {
+      if (card.isFileOpen()) {
+        if (card.sdprinting)
+          MENU_ITEM(function, MSG_PAUSE_PRINT, lcd_sdcard_pause);
+        else
+          MENU_ITEM(function, MSG_RESUME_PRINT, lcd_sdcard_resume);
+        MENU_ITEM(function, MSG_STOP_PRINT, lcd_sdcard_stop);
+      }
+      else {
+        MENU_ITEM(submenu, MSG_CARD_MENU, lcd_sdcard_menu);
+        #if !PIN_EXISTS(SD_DETECT)
+          MENU_ITEM(gcode, MSG_CNG_SDCARD, PSTR("M21"));  // SD-card changed by user
+        #endif
+      }
+    }
+    else {
+      MENU_ITEM(submenu, MSG_NO_CARD, lcd_sdcard_menu);
+      #if !PIN_EXISTS(SD_DETECT)
+        MENU_ITEM(gcode, MSG_INIT_SDCARD, PSTR("M21")); // Manually initialize the SD-card via user interface
+      #endif
+    }
+  #endif //SDSUPPORT
+
+  END_MENU();
+}
+
+/**
+ *
+ * "Tune" submenu items
+ *
+ */
+
+/**
+ * Set the home offset based on the current_position
+ */
+void lcd_set_home_offsets() {
+  // M428 Command
+  enqueue_and_echo_commands_P(PSTR("M428"));
+  lcd_return_to_status();
+}
 
 /**
  * Watch temperature callbacks
@@ -728,19 +743,6 @@ static void lcd_tune_menu() {
       #endif //EXTRUDERS > 3
     #endif //EXTRUDERS > 2
   #endif //EXTRUDERS > 1
-
-  //
-  // Babystep X:
-  // Babystep Y:
-  // Babystep Z:
-  //
-  #if ENABLED(BABYSTEPPING)
-    #if ENABLED(BABYSTEP_XY)
-      MENU_ITEM(submenu, MSG_BABYSTEP_X, lcd_babystep_x);
-      MENU_ITEM(submenu, MSG_BABYSTEP_Y, lcd_babystep_y);
-    #endif //BABYSTEP_XY
-    MENU_ITEM(submenu, MSG_BABYSTEP_Z, lcd_babystep_z);
-  #endif
 
   //
   // Change filament
