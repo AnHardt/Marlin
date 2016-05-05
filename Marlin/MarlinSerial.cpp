@@ -48,6 +48,7 @@
   #endif
 #endif
 
+bool ser_chars_rejected = false;
 
 FORCE_INLINE void store_char(unsigned char c) {
   CRITICAL_SECTION_START;
@@ -62,6 +63,7 @@ FORCE_INLINE void store_char(unsigned char c) {
       rx_buffer.buffer[h] = c;
       rx_buffer.head = i;
     }
+    else ser_chars_rejected = true;
   CRITICAL_SECTION_END;
 
   #if ENABLED(EMERGENCY_PARSER)

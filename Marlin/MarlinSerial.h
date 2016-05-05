@@ -77,6 +77,7 @@
 #define BIN 2
 #define BYTE 0
 
+extern bool ser_chars_rejected;
 
 #ifndef USBCON
 // Define constants and variables for buffering incoming serial data.  We're
