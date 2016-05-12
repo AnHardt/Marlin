@@ -69,7 +69,7 @@ enum DebugFlags {
   DEBUG_INFO          = _BV(1), ///< Print messages for code that has debug output
   DEBUG_ERRORS        = _BV(2), ///< Not implemented
   DEBUG_DRYRUN        = _BV(3), ///< Ignore temperature setting and E movement commands
-  DEBUG_COMMUNICATION = _BV(4), ///< Not implemented
+  DEBUG_COMMUNICATION = _BV(4), ///< extend ADVANCED_OK
   DEBUG_LEVELING      = _BV(5)  ///< Print detailed output for homing and leveling
 };
 

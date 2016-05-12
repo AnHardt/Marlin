@@ -796,4 +796,23 @@ const unsigned int dropsegments = 5; //everything with less than this number of 
 
 //#define EXPERIMENTAL_I2CBUS
 
+/**
+ * DEBUGING
+ */
+
+// Enable this feature to get detailed logging of G28, G29, M48, etc.
+// Logging is off by default. Enable this logging feature with 'M111 S32'.
+// NOTE: Requires a huge amount of PROGMEM.
+//#define DEBUG_LEVELING_FEATURE
+
+//#define DEBUG_COMMUNICATION_FEATURE
+//#define PID_DEBUG // Sends debug data to the serial port.
+//#define PID_BED_DEBUG // Sends debug data to the serial port.
+
+//
+// M100 Free Memory Watcher
+//
+//#define M100_FREE_MEMORY_WATCHER // uncomment to add the M100 Free Memory Watcher for debug purpose
+
+
 #endif // CONFIGURATION_ADV_H

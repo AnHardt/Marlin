@@ -1048,10 +1048,11 @@ void loop() {
   idle();
 }
 
-void gcode_line_error(const char* err, bool doFlush = true) {
+void gcode_line_error(const char* err, char* currentline, bool doFlush = true) {
   SERIAL_ERROR_START;
   serialprintPGM(err);
-  SERIAL_ERRORLN(gcode_LastN);
+  SERIAL_ERROR(gcode_LastN);
+  SERIAL_PROTOCOLPGM(" \""); SERIAL_PROTOCOL(currentline); SERIAL_PROTOCOLPGM("\"\n");
   //Serial.println(gcode_N);
   if (doFlush) FlushSerialRequestResend();
   serial_count = 0;
@@ -1109,7 +1110,7 @@ inline void get_serial_commands() {
         gcode_N = strtol(npos + 1, NULL, 10);
 
         if (gcode_N != gcode_LastN + 1 && !M110) {
-          gcode_line_error(PSTR(MSG_ERR_LINE_NO));
+          gcode_line_error(PSTR(MSG_ERR_LINE_NO),serial_line_buffer);
           return;
         }
 
@@ -1118,13 +1119,13 @@ inline void get_serial_commands() {
           while (command[count] != '*') checksum ^= command[count++];
 
           if (strtol(apos + 1, NULL, 10) != checksum) {
-            gcode_line_error(PSTR(MSG_ERR_CHECKSUM_MISMATCH));
+            gcode_line_error(PSTR(MSG_ERR_CHECKSUM_MISMATCH),serial_line_buffer);
             return;
           }
           // if no errors, continue parsing
         }
         else {
-          gcode_line_error(PSTR(MSG_ERR_NO_CHECKSUM));
+          gcode_line_error(PSTR(MSG_ERR_NO_CHECKSUM),serial_line_buffer);
           return;
         }
 
@@ -1132,7 +1133,7 @@ inline void get_serial_commands() {
         // if no errors, continue parsing
       }
       else if (apos) { // No '*' without 'N'
-        gcode_line_error(PSTR(MSG_ERR_NO_LINENUMBER_WITH_CHECKSUM), false);
+        gcode_line_error(PSTR(MSG_ERR_NO_LINENUMBER_WITH_CHECKSUM), serial_line_buffer, false);
         return;
       }
 
@@ -7710,6 +7711,13 @@ void ok_to_send() {
     }
     SERIAL_PROTOCOLPGM(" P"); SERIAL_PROTOCOL(int(BLOCK_BUFFER_SIZE - planner.movesplanned() - 1));
     SERIAL_PROTOCOLPGM(" B"); SERIAL_PROTOCOL(BUFSIZE - commands_in_queue);
+    #if ENABLED(DEBUG_COMMUNICATION_FEATURE)
+      if (DEBUGGING(DEBUG_COMMUNICATION)) {
+        SERIAL_PROTOCOLPGM(" R"); SERIAL_PROTOCOL(RX_BUFFER_SIZE - MYSERIAL.available());
+        SERIAL_PROTOCOLPGM(" \""); SERIAL_PROTOCOL(command_queue[cmd_queue_index_r]); SERIAL_PROTOCOLPGM("\" ");
+      }
+    #endif
+
   #endif
   SERIAL_EOL;
 }
