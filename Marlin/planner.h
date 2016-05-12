@@ -139,6 +139,9 @@ class Planner {
     #if ENABLED(AUTO_BED_LEVELING_FEATURE)
       static matrix_3x3 bed_level_matrix; // Transform to compensate for bed level
     #endif
+    #if ENABLED(DEBUG_MOVES_PLANED_COUNTER)
+      static uint16_t debug_moves_planed_counter;
+    #endif
 
   private:
 

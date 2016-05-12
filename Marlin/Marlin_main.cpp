@@ -8529,6 +8529,10 @@ void idle(
           SERIAL_ECHOPAIR(", lines parsed:", debug_lines_processed_counter * dt);
           debug_lines_processed_counter = 0;
         #endif
+        #if ENABLED(DEBUG_MOVES_PLANED_COUNTER)
+          SERIAL_ECHOPAIR(", moves planed:", planner.debug_moves_planed_counter * dt);
+          planner.debug_moves_planed_counter = 0;
+        #endif
 
         SERIAL_EOL;
         nextprint = now + DEBUG_COUNTER_INTERVAL_MS;

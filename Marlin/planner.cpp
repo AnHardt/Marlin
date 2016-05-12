@@ -101,6 +101,10 @@ float Planner::min_feedrate_mm_s,
 #if ENABLED(AUTO_BED_LEVELING_FEATURE)
   matrix_3x3 Planner::bed_level_matrix; // Transform to compensate for bed level
 #endif
+#if ENABLED(DEBUG_MOVES_PLANED_COUNTER)
+  uint16_t Planner::debug_moves_planed_counter = 0;
+#endif
+
 
 #if ENABLED(AUTOTEMP)
   float Planner::autotemp_max = 250,
@@ -539,6 +543,9 @@ void Planner::check_axes_activity() {
   void Planner::buffer_line(const float& x, const float& y, const float& z, const float& e, float fr_mm_s, const uint8_t extruder)
 #endif  // AUTO_BED_LEVELING_FEATURE
 {
+#if ENABLED(DEBUG_MOVES_PLANED_COUNTER)
+  debug_moves_planed_counter++;
+#endif
   // Calculate the buffer head after we push this byte
   int next_buffer_head = next_block_index(block_buffer_head);
 
