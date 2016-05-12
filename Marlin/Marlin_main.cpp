@@ -983,6 +983,10 @@ void setup() {
   #endif
 }
 
+#if ENABLED(DEBUG_LOOP_COUNTER)
+  static uint16_t debug_loop_counter = 0;
+#endif
+
 /**
  * The main Marlin program loop
  *
@@ -994,6 +998,10 @@ void setup() {
  *  - Call LCD update
  */
 void loop() {
+  #if ENABLED(DEBUG_LOOP_COUNTER)
+    debug_loop_counter++;
+  #endif
+
   if (commands_in_queue < BUFSIZE) get_available_commands();
 
   #if ENABLED(SDSUPPORT)
@@ -8464,6 +8472,23 @@ void idle(
     bool no_stepper_sleep/*=false*/
   #endif
 ) {
+  #if ENABLED(DEBUG_COUNTERS)
+    static millis_t nextprint = millis() + DEBUG_COUNTER_INTERVAL_MS;
+    millis_t now = millis();
+    if (nextprint <= now) {
+      millis_t jitter = now - nextprint;
+      float dt = DEBUG_COUNTER_INTERVAL_MS / ((jitter * 1.0) + DEBUG_COUNTER_INTERVAL_MS);
+      SERIAL_ECHO_START;
+      SERIAL_ECHOPAIR("jitter: ", jitter);
+      #if ENABLED(DEBUG_LOOP_COUNTER)
+        SERIAL_ECHOPAIR(", loop(): ", debug_loop_counter * dt);
+        debug_loop_counter = 0;
+      #endif
+      SERIAL_EOL;
+      nextprint = now + DEBUG_COUNTER_INTERVAL_MS;
+    }
+  #endif
+
   lcd_update();
   host_keepalive();
   manage_inactivity(
