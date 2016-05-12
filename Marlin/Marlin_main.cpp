@@ -8497,6 +8497,16 @@ void idle(
           SERIAL_ECHOPAIR(", watchdog reset: ", debug_watchdog_counter * dt);
           debug_watchdog_counter = 0;
         #endif
+        #if ENABLED(DEBUG_TEMP_ISR_COUNTER)
+          uint16_t t_isr_c;
+          {CRITICAL_SECTION_START;
+          t_isr_c = thermalManager.debug_temp_isr_counter;
+          CRITICAL_SECTION_END;}
+          SERIAL_ECHOPAIR(", tempISR: ", t_isr_c * dt);
+          {CRITICAL_SECTION_START;
+          thermalManager.debug_temp_isr_counter = 0;
+          CRITICAL_SECTION_END;}
+        #endif
 
         SERIAL_EOL;
         nextprint = now + DEBUG_COUNTER_INTERVAL_MS;

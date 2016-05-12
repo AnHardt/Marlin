@@ -59,6 +59,9 @@ int   Temperature::current_temperature_raw[HOTENDS] = { 0 },
       Temperature::target_temperature[HOTENDS] = { 0 },
       Temperature::current_temperature_bed_raw = 0,
       Temperature::target_temperature_bed = 0;
+#if ENABLED(DEBUG_TEMP_ISR_COUNTER)
+  uint16_t Temperature::debug_temp_isr_counter = 0;
+#endif
 
 #if ENABLED(TEMP_SENSOR_1_AS_REDUNDANT)
   float Temperature::redundant_temperature = 0.0;
@@ -1388,6 +1391,10 @@ void Temperature::isr() {
   static unsigned char temp_count = 0;
   static TempState temp_state = StartupDelay;
   static unsigned char pwm_count = _BV(SOFT_PWM_SCALE);
+
+  #if ENABLED(DEBUG_TEMP_ISR_COUNTER)
+    debug_temp_isr_counter++;
+  #endif
 
   // Static members for each heater
   #if ENABLED(SLOW_PWM_HEATERS)

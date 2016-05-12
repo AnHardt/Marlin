@@ -60,6 +60,9 @@ class Temperature {
                  target_temperature[HOTENDS],
                  current_temperature_bed_raw,
                  target_temperature_bed;
+#if ENABLED(DEBUG_TEMP_ISR_COUNTER)
+    static uint16_t debug_temp_isr_counter;
+#endif
 
     #if ENABLED(TEMP_SENSOR_1_AS_REDUNDANT)
       static float redundant_temperature;
