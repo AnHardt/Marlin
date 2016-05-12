@@ -8507,6 +8507,16 @@ void idle(
           thermalManager.debug_temp_isr_counter = 0;
           CRITICAL_SECTION_END;}
         #endif
+        #if ENABLED(DEBUG_STEP_ISR_COUNTER)
+          uint32_t s_isr_c;
+          {CRITICAL_SECTION_START;
+          s_isr_c =  stepper.debug_step_isr_counter;
+          CRITICAL_SECTION_END;}
+          SERIAL_ECHOPAIR(", stepISR:", s_isr_c * dt);
+          {CRITICAL_SECTION_START;
+          stepper.debug_step_isr_counter = 0;
+          CRITICAL_SECTION_END;}
+        #endif
 
         SERIAL_EOL;
         nextprint = now + DEBUG_COUNTER_INTERVAL_MS;

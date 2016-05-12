@@ -91,6 +91,10 @@ class Stepper {
       static bool performing_homing;
     #endif
 
+    #if ENABLED(DEBUG_STEP_ISR_COUNTER)
+      static uint32_t debug_step_isr_counter;
+    #endif
+
   private:
 
     static unsigned char last_direction_bits;        // The next stepping-bits to be output

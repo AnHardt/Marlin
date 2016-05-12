@@ -71,6 +71,9 @@ block_t* Stepper::current_block = NULL;  // A pointer to the block currently bei
 #if ENABLED(Z_DUAL_ENDSTOPS)
   bool Stepper::performing_homing = false;
 #endif
+#if ENABLED(DEBUG_STEP_ISR_COUNTER)
+  uint32_t Stepper::debug_step_isr_counter = 0;
+#endif
 
 // private:
 
@@ -310,6 +313,10 @@ void Stepper::set_directions() {
 ISR(TIMER1_COMPA_vect) { Stepper::isr(); }
 
 void Stepper::isr() {
+  #if ENABLED(DEBUG_STEP_ISR_COUNTER)
+    debug_step_isr_counter++;
+  #endif
+
   if (cleaning_buffer_counter) {
     current_block = NULL;
     planner.discard_current_block();
