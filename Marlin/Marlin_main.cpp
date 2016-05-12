@@ -6993,12 +6993,20 @@ inline void gcode_T(uint8_t tmp_extruder) {
   #endif
 }
 
+#if ENABLED(DEBUG_LINES_PROCESSED_COUNTER)
+  uint8_t debug_lines_processed_counter = 0;
+#endif
+
 /**
  * Process a single command and dispatch it to its handler
  * This is called from the main loop()
  */
 void process_next_command() {
   current_command = command_queue[cmd_queue_index_r];
+
+  #if ENABLED(DEBUG_LINES_PROCESSED_COUNTER)
+    debug_lines_processed_counter++;
+  #endif
 
   if (DEBUGGING(ECHO)) {
     SERIAL_ECHO_START;
@@ -8516,6 +8524,10 @@ void idle(
           {CRITICAL_SECTION_START;
           stepper.debug_step_isr_counter = 0;
           CRITICAL_SECTION_END;}
+        #endif
+        #if ENABLED(DEBUG_LINES_PROCESSED_COUNTER)
+          SERIAL_ECHOPAIR(", lines parsed:", debug_lines_processed_counter * dt);
+          debug_lines_processed_counter = 0;
         #endif
 
         SERIAL_EOL;
