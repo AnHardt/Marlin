@@ -813,6 +813,8 @@ const unsigned int dropsegments = 5; //everything with less than this number of 
 #if ENABLED(DEBUG_COUNTERS)
   #define DEBUG_COUNTER_INTERVAL_MS 1000
   #define DEBUG_LOOP_COUNTER
+  #define DEBUG_IDLE_COUNTER
+  #define DEBUG_WATCHDOG_COUNTER
 #endif
 
 //

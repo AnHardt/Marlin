@@ -983,6 +983,7 @@ void setup() {
   #endif
 }
 
+
 #if ENABLED(DEBUG_LOOP_COUNTER)
   static uint16_t debug_loop_counter = 0;
 #endif
@@ -8472,26 +8473,40 @@ void idle(
     bool no_stepper_sleep/*=false*/
   #endif
 ) {
-  #if ENABLED(DEBUG_COUNTERS)
-    static millis_t nextprint = millis() + DEBUG_COUNTER_INTERVAL_MS;
-    millis_t now = millis();
-    if (nextprint <= now) {
-      millis_t jitter = now - nextprint;
-      float dt = DEBUG_COUNTER_INTERVAL_MS / ((jitter * 1.0) + DEBUG_COUNTER_INTERVAL_MS);
-      SERIAL_ECHO_START;
-      SERIAL_ECHOPAIR("jitter: ", jitter);
-      #if ENABLED(DEBUG_LOOP_COUNTER)
-        SERIAL_ECHOPAIR(", loop(): ", debug_loop_counter * dt);
-        debug_loop_counter = 0;
-      #endif
-      SERIAL_EOL;
-      nextprint = now + DEBUG_COUNTER_INTERVAL_MS;
-    }
-  #endif
+    #if ENABLED(DEBUG_IDLE_COUNTER)
+      static uint16_t debug_idle_counter = 0;
+      debug_idle_counter++;
+    #endif
+    #if ENABLED(DEBUG_COUNTERS)
+      static millis_t nextprint = millis() + DEBUG_COUNTER_INTERVAL_MS;
+      millis_t now = millis();
+      if (nextprint <= now) {
+        millis_t jitter = now - nextprint;
+        float dt = DEBUG_COUNTER_INTERVAL_MS / ((jitter * 1.0) + DEBUG_COUNTER_INTERVAL_MS);
+        SERIAL_ECHO_START;
+        SERIAL_ECHOPAIR("jitter: ", jitter);
+        #if ENABLED(DEBUG_IDLE_COUNTER)
+          SERIAL_ECHOPAIR(", idle(): ", debug_idle_counter * dt);
+          debug_idle_counter = 0;
+        #endif
+        #if ENABLED(DEBUG_LOOP_COUNTER)
+          SERIAL_ECHOPAIR(", loop(): ", debug_loop_counter * dt);
+          debug_loop_counter = 0;
+        #endif
+        #if ENABLED(DEBUG_WATCHDOG_COUNTER)
+          SERIAL_ECHOPAIR(", watchdog reset: ", debug_watchdog_counter * dt);
+          debug_watchdog_counter = 0;
+        #endif
 
-  lcd_update();
-  host_keepalive();
-  manage_inactivity(
+        SERIAL_EOL;
+        nextprint = now + DEBUG_COUNTER_INTERVAL_MS;
+      }
+    #endif
+
+    lcd_update();
+    host_keepalive();
+    manage_inactivity(
+
     #if ENABLED(FILAMENT_CHANGE_FEATURE)
       no_stepper_sleep
     #endif

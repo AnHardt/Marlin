@@ -26,6 +26,10 @@
 
 #include "watchdog.h"
 
+#if ENABLED(DEBUG_WATCHDOG_COUNTER)
+  uint8_t debug_watchdog_counter = 0;
+#endif
+
 // Initialize watchdog with a 4 sec interrupt time
 void watchdog_init() {
   #if ENABLED(WATCHDOG_RESET_MANUAL)

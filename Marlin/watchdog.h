@@ -26,11 +26,20 @@
 #include "Marlin.h"
 #include <avr/wdt.h>
 
+#if ENABLED(DEBUG_WATCHDOG_COUNTER)
+  extern uint8_t debug_watchdog_counter;
+#endif
+
 // Initialize watchdog with a 4 second interrupt time
 void watchdog_init();
 
 // Reset watchdog. MUST be called at least every 4 seconds after the
 // first watchdog_init or AVR will go into emergency procedures.
-inline void watchdog_reset() { wdt_reset(); }
+inline void watchdog_reset() {
+  wdt_reset();
+  #if ENABLED(DEBUG_WATCHDOG_COUNTER)
+    debug_watchdog_counter++;
+  #endif
+}
 
 #endif
