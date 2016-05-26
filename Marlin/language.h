@@ -234,11 +234,11 @@
 
 // LCD Menu Messages
 
-#define LANGUAGE_INCL_(M) STRINGIFY_(language_##M.h)
+#define LANGUAGE_INCL_(M) STRINGIFY_(lcd-languages/language_##M.h)
 #define LANGUAGE_INCL(M) LANGUAGE_INCL_(M)
 #define INCLUDE_LANGUAGE LANGUAGE_INCL(LCD_LANGUAGE)
 
 #include INCLUDE_LANGUAGE
-#include "language_en.h"
+#include "lcd-languages/language_en.h"
 
 #endif //__LANGUAGE_H
