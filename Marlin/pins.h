@@ -24,121 +24,121 @@
 #define PINS_H
 
 #if MB(GEN7_CUSTOM)
-  #include "pins_GEN7_CUSTOM.h"
+  #include "pin_files/pins_GEN7_CUSTOM.h"
 #elif MB(GEN7_12)
-  #include "pins_GEN7_12.h"
+  #include "pin_files/pins_GEN7_12.h"
 #elif MB(GEN7_13)
-  #include "pins_GEN7_13.h"
+  #include "pin_files/pins_GEN7_13.h"
 #elif MB(GEN7_14)
-  #include "pins_GEN7_14.h"
+  #include "pin_files/pins_GEN7_14.h"
 #elif MB(CHEAPTRONIC)
-  #include "pins_CHEAPTRONIC.h"
+  #include "pin_files/pins_CHEAPTRONIC.h"
 #elif MB(SETHI)
-  #include "pins_SETHI.h"
+  #include "pin_files/pins_SETHI.h"
 #elif MB(RAMPS_OLD)
-  #include "pins_RAMPS_OLD.h"
+  #include "pin_files/pins_RAMPS_OLD.h"
 #elif MB(RAMPS_13_EFB)
-  #include "pins_RAMPS_13_EFB.h"
+  #include "pin_files/pins_RAMPS_13_EFB.h"
 #elif MB(RAMPS_13_EEB) || MB(RAMPS_13_EFF) || MB(RAMPS_13_EEF) || MB(RAMPS_13_SF)
-  #include "pins_RAMPS_13.h"
+  #include "pin_files/pins_RAMPS_13.h"
 #elif MB(RAMPS_14_EFB)
-  #include "pins_RAMPS_14_EFB.h"
+  #include "pin_files/pins_RAMPS_14_EFB.h"
 #elif MB(RAMPS_14_EEB) || MB(RAMPS_14_EFF) || MB(RAMPS_14_EEF) || MB(RAMPS_14_SF)
-  #include "pins_RAMPS_14.h"
+  #include "pin_files/pins_RAMPS_14.h"
 #elif MB(GEN6)
-  #include "pins_GEN6.h"
+  #include "pin_files/pins_GEN6.h"
 #elif MB(GEN6_DELUXE)
-  #include "pins_GEN6_DELUXE.h"
+  #include "pin_files/pins_GEN6_DELUXE.h"
 #elif MB(SANGUINOLOLU_11)
-  #include "pins_SANGUINOLOLU_11.h"
+  #include "pin_files/pins_SANGUINOLOLU_11.h"
 #elif MB(SANGUINOLOLU_12)
-  #include "pins_SANGUINOLOLU_12.h"
+  #include "pin_files/pins_SANGUINOLOLU_12.h"
 #elif MB(MELZI)
-  #include "pins_MELZI.h"
+  #include "pin_files/pins_MELZI.h"
 #elif MB(STB_11)
-  #include "pins_STB_11.h"
+  #include "pin_files/pins_STB_11.h"
 #elif MB(AZTEEG_X1)
-  #include "pins_AZTEEG_X1.h"
+  #include "pin_files/pins_AZTEEG_X1.h"
 #elif MB(MELZI_MAKR3D)
-  #include "pins_MELZI_MAKR3D.h"
+  #include "pin_files/pins_MELZI_MAKR3D.h"
 #elif MB(AZTEEG_X3)
-  #include "pins_AZTEEG_X3.h"
+  #include "pin_files/pins_AZTEEG_X3.h"
 #elif MB(AZTEEG_X3_PRO)
-  #include "pins_AZTEEG_X3_PRO.h"
+  #include "pin_files/pins_AZTEEG_X3_PRO.h"
 #elif MB(ULTIMAKER)
-  #include "pins_ULTIMAKER.h"
+  #include "pin_files/pins_ULTIMAKER.h"
 #elif MB(ULTIMAKER_OLD)
-  #include "pins_ULTIMAKER_OLD.h"
+  #include "pin_files/pins_ULTIMAKER_OLD.h"
 #elif MB(ULTIMAIN_2)
-  #include "pins_ULTIMAIN_2.h"
+  #include "pin_files/pins_ULTIMAIN_2.h"
 #elif MB(3DRAG)
-  #include "pins_3DRAG.h"
+  #include "pin_files/pins_3DRAG.h"
 #elif MB(K8200)
-  #include "pins_K8200.h"
+  #include "pin_files/pins_K8200.h"
 #elif MB(TEENSYLU)
-  #include "pins_TEENSYLU.h"
+  #include "pin_files/pins_TEENSYLU.h"
 #elif MB(RUMBA)
-  #include "pins_RUMBA.h"
+  #include "pin_files/pins_RUMBA.h"
 #elif MB(PRINTRBOARD)
-  #include "pins_PRINTRBOARD.h"
+  #include "pin_files/pins_PRINTRBOARD.h"
 #elif MB(PRINTRBOARD_REVF)
-  #include "pins_PRINTRBOARD_REVF.h"
+  #include "pin_files/pins_PRINTRBOARD_REVF.h"
 #elif MB(BRAINWAVE)
-  #include "pins_BRAINWAVE.h"
+  #include "pin_files/pins_BRAINWAVE.h"
 #elif MB(BRAINWAVE_PRO)
-  #include "pins_BRAINWAVE_PRO.h"
+  #include "pin_files/pins_BRAINWAVE_PRO.h"
 #elif MB(SAV_MKI)
-  #include "pins_SAV_MKI.h"
+  #include "pin_files/pins_SAV_MKI.h"
 #elif MB(TEENSY2)
-  #include "pins_TEENSY2.h"
+  #include "pin_files/pins_TEENSY2.h"
 #elif MB(GEN3_PLUS)
-  #include "pins_GEN3_PLUS.h"
+  #include "pin_files/pins_GEN3_PLUS.h"
 #elif MB(GEN3_MONOLITHIC)
-  #include "pins_GEN3_MONOLITHIC.h"
+  #include "pin_files/pins_GEN3_MONOLITHIC.h"
 #elif MB(MEGATRONICS)
-  #include "pins_MEGATRONICS.h"
+  #include "pin_files/pins_MEGATRONICS.h"
 #elif MB(MINITRONICS)
-  #include "pins_MINITRONICS.h"
+  #include "pin_files/pins_MINITRONICS.h"
 #elif MB(MEGATRONICS_2)
-  #include "pins_MEGATRONICS_2.h"
+  #include "pin_files/pins_MEGATRONICS_2.h"
 #elif MB(MEGATRONICS_3)
-  #include "pins_MEGATRONICS_3.h"
+  #include "pin_files/pins_MEGATRONICS_3.h"
 #elif MB(OMCA_A)
-  #include "pins_OMCA_A.h"
+  #include "pin_files/pins_OMCA_A.h"
 #elif MB(OMCA)
-  #include "pins_OMCA.h"
+  #include "pin_files/pins_OMCA.h"
 #elif MB(RAMBO)
-  #include "pins_RAMBO.h"
+  #include "pin_files/pins_RAMBO.h"
 #elif MB(MINIRAMBO)
-  #include "pins_MINIRAMBO.h"
+  #include "pin_files/pins_MINIRAMBO.h"
 #elif MB(ELEFU_3)
-  #include "pins_ELEFU_3.h"
+  #include "pin_files/pins_ELEFU_3.h"
 #elif MB(5DPRINT)
-  #include "pins_5DPRINT.h"
+  #include "pin_files/pins_5DPRINT.h"
 #elif MB(LEAPFROG)
-  #include "pins_LEAPFROG.h"
+  #include "pin_files/pins_LEAPFROG.h"
 #elif MB(BAM_DICE)
-  #include "pins_RAMPS_14.h"
+  #include "pin_files/pins_RAMPS_14.h"
 #elif MB(BAM_DICE_DUE)
-  #include "pins_BAM_DICE_DUE.h"
+  #include "pin_files/pins_BAM_DICE_DUE.h"
 #elif MB(FELIX2)
-  #include "pins_FELIX2.h"
+  #include "pin_files/pins_FELIX2.h"
 #elif MB(MKS_BASE)
-  #include "pins_MKS_BASE.h"
+  #include "pin_files/pins_MKS_BASE.h"
 #elif MB(RIGIDBOARD)
-  #include "pins_RIGIDBOARD.h"
+  #include "pin_files/pins_RIGIDBOARD.h"
 #elif MB(MEGACONTROLLER)
-  #include "pins_MEGACONTROLLER.h"
+  #include "pin_files/pins_MEGACONTROLLER.h"
 #elif MB(BQ_ZUM_MEGA_3D)
-  #include "pins_BQ_ZUM_MEGA_3D.h"
+  #include "pin_files/pins_BQ_ZUM_MEGA_3D.h"
 #elif MB(99)
-  #include "pins_99.h"
+  #include "pin_files/pins_99.h"
 #elif MB(AJ4P)
-  #include "pins_AJ4P.h"
+  #include "pin_files/pins_AJ4P.h"
 #elif MB(MKS_13)
-  #include "pins_MKS_13.h"
+  #include "pin_files/pins_MKS_13.h"
 #elif MB(SAINSMART_2IN1)
-  #include "pins_SAINSMART_2IN1.h"
+  #include "pin_files/pins_SAINSMART_2IN1.h"
 #else
   #error "Unknown MOTHERBOARD value set in Configuration.h"
 #endif
