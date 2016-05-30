@@ -1227,18 +1227,36 @@ inline void manual_move_to_current(AxisEnum axis) {
 float move_menu_scale;
 
 static void _lcd_move(const char* name, AxisEnum axis, float min, float max) {
+  static bool in_here = false;
+  static float target = 0.0;
   ENCODER_DIRECTION_NORMAL();
-  if (encoderPosition) {
-    refresh_cmd_timeout();
-    current_position[axis] += float((int32_t)encoderPosition) * move_menu_scale;
-    if (min_software_endstops) NOLESS(current_position[axis], min);
-    if (max_software_endstops) NOMORE(current_position[axis], max);
-    encoderPosition = 0;
-    manual_move_to_current(axis);
-    lcdDrawUpdate = LCDVIEW_REDRAW_NOW;
+  lcd_implementation_drawedit(name, ftostr31(target));
+  if (!in_here) {  // Buffer current_position in target
+    target = current_position[axis];
+    in_here = true;
+    lcdDrawUpdate = LCDVIEW_CALL_REDRAW_NEXT;
   }
-  if (lcdDrawUpdate) lcd_implementation_drawedit(name, ftostr31(current_position[axis]));
-  if (LCD_CLICKED) lcd_goto_previous_menu(true);
+  if (encoderPosition) { // alter the target any time.
+    target += float((int32_t)encoderPosition) * move_menu_scale;
+    if (min_software_endstops) NOLESS(target, min);
+    if (max_software_endstops) NOMORE(target, max);
+    encoderPosition = 0;
+    lcdDrawUpdate = LCDVIEW_CALL_REDRAW_NEXT;
+  }
+  if (planner.movesplanned() <= 3) { // approximate current_position to target
+    float pos_dif = target - current_position[axis];
+    constrain(pos_dif, -move_menu_scale, move_menu_scale);   // limit the size of the moves we send to the planer. Max 3*move_menu_scale overshot into the wrong direction.
+    current_position[axis] += pos_dif;
+    line_to_current(axis);
+    lcdDrawUpdate = LCDVIEW_CALL_REDRAW_NEXT;
+    refresh_cmd_timeout();
+  }
+  if (LCD_CLICKED) { // When finished set current_position to target
+    in_here = false;
+    current_position[axis] = target;
+    line_to_current(axis);  // final move to target - all at once.
+    lcd_goto_previous_menu(true);
+  }
 }
 #if ENABLED(DELTA)
   static float delta_clip_radius_2 =  (DELTA_PRINTABLE_RADIUS) * (DELTA_PRINTABLE_RADIUS);
