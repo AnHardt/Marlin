@@ -2345,6 +2345,14 @@ static void homeaxis(AxisEnum axis) {
         #if ENABLED(DEBUG_LEVELING_FEATURE)
           if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("> SERVO_ENDSTOPS > Stow with servo.move()");
         #endif
+
+        #ifndef Z_RAISE_AFTER_PROBING
+          #define Z_RAISE_AFTER_PROBING 15 // your number
+        #endif
+        current_position[Z_AXIS] = Z_RAISE_AFTER_PROBING;
+        line_to_current_position();
+        stepper.synchronize();
+
         servo[servo_endstop_id[axis]].move(servo_endstop_angle[axis][1]);
         if (_Z_SERVO_SUBTEST) endstops.enable_z_probe(false);
       }
