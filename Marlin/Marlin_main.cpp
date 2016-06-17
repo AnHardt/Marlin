@@ -6747,13 +6747,11 @@ void process_next_command() {
         break;
 
       // G2, G3
-      #if ENABLED(ARC_SUPPORT) && DISABLED(SCARA)
-
+      #if ENABLED(ARC_SUPPORT)
         case 2: // G2  - CW ARC
         case 3: // G3  - CCW ARC
           gcode_G2_G3(codenum == 2);
           break;
-
       #endif
 
       // G4 Dwell
@@ -7388,7 +7386,7 @@ void ok_to_send() {
   SERIAL_EOL;
 }
 
-void clamp_to_software_endstops(float target[3]) {
+void clamp_to_software_endstops(float target[NUM_AXIS]) {
   if (min_software_endstops) {
     NOLESS(target[X_AXIS], sw_endstop_min[X_AXIS]);
     NOLESS(target[Y_AXIS], sw_endstop_min[Y_AXIS]);
@@ -7739,8 +7737,10 @@ void prepare_move_to_destination() {
           r_X = -offset[X_AXIS],  // Radius vector from center to current location
           r_Y = -offset[Y_AXIS],
           rt_X = target[X_AXIS] - center_X,
-          rt_Y = target[Y_AXIS] - center_Y;
+          rt_Y = target[Y_AXIS] - center_Y,
+          final_dest[NUM_AXIS];
 
+    memcpy(final_dest, target, sizeof(final_dest));
     // CCW angle of rotation between position and target from the circle center. Only one atan2() trig computation required.
     float angular_travel = atan2(r_X * rt_Y - r_Y * rt_X, r_X * rt_X + r_Y * rt_Y);
     if (angular_travel < 0) angular_travel += RADIANS(360);
@@ -7789,16 +7789,15 @@ void prepare_move_to_destination() {
     float cos_T = 1 - 0.5 * theta_per_segment * theta_per_segment; // Small angle approximation
     float sin_T = theta_per_segment;
 
-    float arc_target[NUM_AXIS];
     float sin_Ti, cos_Ti, r_new_Y;
     uint16_t i;
     int8_t count = 0;
 
     // Initialize the linear axis
-    arc_target[Z_AXIS] = current_position[Z_AXIS];
+    destination[Z_AXIS] = current_position[Z_AXIS];
 
     // Initialize the extruder axis
-    arc_target[E_AXIS] = current_position[E_AXIS];
+    destination[E_AXIS] = current_position[E_AXIS];
 
     float feed_rate = feedrate * feedrate_multiplier / 60 / 100.0;
 
@@ -7832,39 +7831,17 @@ void prepare_move_to_destination() {
       }
 
       // Update arc_target location
-      arc_target[X_AXIS] = center_X + r_X;
-      arc_target[Y_AXIS] = center_Y + r_Y;
-      arc_target[Z_AXIS] += linear_per_segment;
-      arc_target[E_AXIS] += extruder_per_segment;
+      destination[X_AXIS] = center_X + r_X;
+      destination[Y_AXIS] = center_Y + r_Y;
+      destination[Z_AXIS] += linear_per_segment;
+      destination[E_AXIS] += extruder_per_segment;
 
-      clamp_to_software_endstops(arc_target);
-
-      #if ENABLED(DELTA) || ENABLED(SCARA)
-        calculate_delta(arc_target);
-        #if ENABLED(AUTO_BED_LEVELING_FEATURE)
-          adjust_delta(arc_target);
-        #endif
-        planner.buffer_line(delta[X_AXIS], delta[Y_AXIS], delta[Z_AXIS], arc_target[E_AXIS], feed_rate, active_extruder);
-      #else
-        planner.buffer_line(arc_target[X_AXIS], arc_target[Y_AXIS], arc_target[Z_AXIS], arc_target[E_AXIS], feed_rate, active_extruder);
-      #endif
+      prepare_move_to_destination();
     }
 
     // Ensure last segment arrives at target location.
-    #if ENABLED(DELTA) || ENABLED(SCARA)
-      calculate_delta(target);
-      #if ENABLED(AUTO_BED_LEVELING_FEATURE)
-        adjust_delta(target);
-      #endif
-      planner.buffer_line(delta[X_AXIS], delta[Y_AXIS], delta[Z_AXIS], target[E_AXIS], feed_rate, active_extruder);
-    #else
-      planner.buffer_line(target[X_AXIS], target[Y_AXIS], target[Z_AXIS], target[E_AXIS], feed_rate, active_extruder);
-    #endif
-
-    // As far as the parser is concerned, the position is now == target. In reality the
-    // motion control system might still be processing the action and the real tool position
-    // in any intermediate location.
-    set_current_to_destination();
+    memcpy(destination, final_dest, sizeof(destination));
+    prepare_move_to_destination();
   }
 #endif
 
