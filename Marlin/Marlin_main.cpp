@@ -2758,6 +2758,8 @@ inline void gcode_G28() {
 
   // For auto bed leveling, clear the level matrix
   #if ENABLED(AUTO_BED_LEVELING_FEATURE)
+    matrix_3x3 temp_matrix;
+    temp_matrix.copy(temp_matrix, plan_bed_level_matrix);
     planner.bed_level_matrix.set_to_identity();
     #if ENABLED(DELTA)
       reset_bed_level();
@@ -3111,7 +3113,12 @@ inline void gcode_G28() {
   refresh_cmd_timeout();
   endstops.hit_on_purpose(); // clear endstop hit flags
 
+  #if ENABLED(AUTO_BED_LEVELING_FEATURE)
+    temp_matrix.copy(plan_bed_level_matrix, temp_matrix);
+  #endif
+
   #if ENABLED(DEBUG_LEVELING_FEATURE)
+    plan_bed_level_matrix.debug(" \n\nBed Level Correction Matrix:");
     if (DEBUGGING(LEVELING)) {
       SERIAL_ECHOLNPGM("<<< gcode_G28");
     }
