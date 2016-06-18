@@ -1129,6 +1129,11 @@ inline void get_serial_commands() {
           || sd_char == '\n' || sd_char == '\r'
           || ((sd_char == '#' || sd_char == ':') && !sd_comment_mode)
       ) {
+        if (n == -1 & !card_eof) {
+          SERIAL_ERROR_START;
+          SERIAL_ECHOPGM("SD read error: ");
+//          SERIAL_ECHOLN(card.errorCode());
+        }
         if (card_eof) {
           SERIAL_PROTOCOLLNPGM(MSG_FILE_PRINTED);
           print_job_timer.stop();
