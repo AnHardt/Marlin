@@ -1618,13 +1618,14 @@ static void clean_up_after_endstop_or_probe_move() {
   refresh_cmd_timeout();
 }
 
+/* currently unused
+static void clean_up_after_endstop_move() {
+  clean_up_after_endstop_or_probe_move();
+  endstops.not_homing();
+}
+*/
+
 #if HAS_BED_PROBE
-
-  static void clean_up_after_endstop_move() {
-    clean_up_after_endstop_or_probe_move();
-    endstops.not_homing();
-  }
-
   #if ENABLED(DELTA)
     /**
      * Calculate delta, start a line, and set current_position to destination
@@ -1666,17 +1667,23 @@ static void clean_up_after_endstop_or_probe_move() {
 
     #else
 
-      feedrate = homing_feedrate[Z_AXIS];
-
-      current_position[Z_AXIS] = z;
-      line_to_current_position();
-      stepper.synchronize();
+      // Do the move at a high level.
+      if (current_position[Z_AXIS] < z) {
+        feedrate = homing_feedrate[Z_AXIS];
+        current_position[Z_AXIS] = z;
+        line_to_current_position();
+      }
 
       feedrate = XY_PROBE_FEEDRATE;
-
       current_position[X_AXIS] = x;
       current_position[Y_AXIS] = y;
       line_to_current_position();
+
+      if (current_position[Z_AXIS] > z) {
+        feedrate = homing_feedrate[Z_AXIS];
+        current_position[Z_AXIS] = z;
+        line_to_current_position();
+      }
 
     #endif
 
@@ -1715,18 +1722,10 @@ static void clean_up_after_endstop_or_probe_move() {
       z_dest -= zprobe_zoffset;
 
     if (z_dest > current_position[Z_AXIS]) {
-      float old_feedrate = feedrate;
-      feedrate = homing_feedrate[Z_AXIS];
       do_blocking_move_to_z(z_dest);
-      feedrate = old_feedrate;
     }
   }
 
-  inline void raise_z_after_probing() {
-    #if Z_RAISE_AFTER_PROBING > 0
-      do_probe_raise(Z_RAISE_AFTER_PROBING);
-    #endif
-  }
 #endif //HAS_BED_PROBE
 
 #if ENABLED(Z_PROBE_SLED) || ENABLED(Z_SAFE_HOMING) || HAS_PROBING_PROCEDURE
@@ -1774,7 +1773,9 @@ static void clean_up_after_endstop_or_probe_move() {
     float oldXpos = current_position[X_AXIS]; // save x position
     float old_feedrate = feedrate;
     if (dock) {
-      raise_z_after_probing(); // raise Z
+      #if Z_RAISE_AFTER_PROBING > 0
+        do_probe_raise(Z_RAISE_AFTER_PROBING);
+      #endif
       // Dock sled a bit closer to ensure proper capturing
       feedrate = XY_PROBE_FEEDRATE;
       do_blocking_move_to_x(X_MAX_POS + SLED_DOCKING_OFFSET + offset - 1);
@@ -2084,65 +2085,47 @@ static void clean_up_after_endstop_or_probe_move() {
 
 #if HAS_PROBING_PROCEDURE
 
-  inline void do_blocking_move_to_xy(float x, float y) {
-    do_blocking_move_to(x, y, current_position[Z_AXIS]);
-  }
-
-  enum ProbeAction {
-    ProbeStay          = 0,
-    ProbeDeploy        = _BV(0),
-    ProbeStow          = _BV(1),
-    ProbeDeployAndStow = (ProbeDeploy | ProbeStow)
-  };
-
   // Probe bed height at position (x,y), returns the measured z value
-  static float probe_pt(float x, float y, float z_raise, ProbeAction probe_action = ProbeDeployAndStow, int verbose_level = 1) {
+  static float probe_pt(float x, float y, bool stow = true, int verbose_level = 1) {
     #if ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) {
         SERIAL_ECHOLNPGM("probe_pt >>>");
-        SERIAL_ECHOPAIR("> ProbeAction:", probe_action);
+        SERIAL_ECHOPAIR("> stow:", stow);
         SERIAL_EOL;
         DEBUG_POS("", current_position);
       }
     #endif
 
-    float old_feedrate = feedrate;
-
-    // Raise by z_raise, then move the Z probe to the given XY
     #if ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) {
-        SERIAL_ECHOPAIR("Z Raise by z_raise ", z_raise);
-        SERIAL_EOL;
-      }
-    #endif
-    do_probe_raise(z_raise); // this also updates current_position
-
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
-      if (DEBUGGING(LEVELING)) {
-        SERIAL_ECHOPAIR("> do_blocking_move_to_xy ", x - (X_PROBE_OFFSET_FROM_EXTRUDER));
+        SERIAL_ECHOPAIR("> do_blocking_move_to ", x - (X_PROBE_OFFSET_FROM_EXTRUDER));
         SERIAL_ECHOPAIR(", ", y - (Y_PROBE_OFFSET_FROM_EXTRUDER));
+        SERIAL_ECHOPAIR(", ", max(current_position[Z_AXIS],Z_RAISE_BETWEEN_PROBINGS));
         SERIAL_EOL;
       }
     #endif
 
     // this also updates current_position
-    feedrate = XY_PROBE_FEEDRATE;
-    do_blocking_move_to_xy(x - (X_PROBE_OFFSET_FROM_EXTRUDER), y - (Y_PROBE_OFFSET_FROM_EXTRUDER));
+    do_blocking_move_to(x - (X_PROBE_OFFSET_FROM_EXTRUDER), y - (Y_PROBE_OFFSET_FROM_EXTRUDER), max(current_position[Z_AXIS],Z_RAISE_BETWEEN_PROBINGS));
 
-    if (probe_action & ProbeDeploy) {
-      #if ENABLED(DEBUG_LEVELING_FEATURE)
-        if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("> ProbeDeploy");
-      #endif
-      deploy_z_probe();
-    }
+    #if ENABLED(DEBUG_LEVELING_FEATURE)
+      if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("> ProbeDeploy");
+    #endif
+    deploy_z_probe();
 
     float measured_z = run_z_probe();
 
-    if (probe_action & ProbeStow) {
+    if (stow) {
       #if ENABLED(DEBUG_LEVELING_FEATURE)
         if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("> ProbeStow (stow_z_probe will do Z Raise)");
       #endif
       stow_z_probe();
+    }
+    else {
+      #if ENABLED(DEBUG_LEVELING_FEATURE)
+        if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("> Raise only");
+      #endif
+      do_probe_raise(max(current_position[Z_AXIS],Z_RAISE_BETWEEN_PROBINGS));
     }
 
     if (verbose_level > 2) {
@@ -2158,8 +2141,6 @@ static void clean_up_after_endstop_or_probe_move() {
     #if ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("<<< probe_pt");
     #endif
-
-    feedrate = old_feedrate;
 
     return measured_z;
   }
@@ -3542,19 +3523,7 @@ inline void gcode_G28() {
           double xProbe = left_probe_bed_position + xGridSpacing * xCount;
 
           // raise extruder
-          float measured_z,
-                z_raise = probePointCounter ? Z_RAISE_BETWEEN_PROBINGS : Z_RAISE_BEFORE_PROBING;
-
-          #if ENABLED(DEBUG_LEVELING_FEATURE)
-            if (DEBUGGING(LEVELING)) {
-              SERIAL_ECHOPGM("z_raise = (");
-              if (probePointCounter)
-                SERIAL_ECHOPGM("between) ");
-              else
-                SERIAL_ECHOPGM("before) ");
-              SERIAL_ECHOLN(z_raise);
-            }
-          #endif
+          float measured_z;
 
           #if ENABLED(DELTA)
             // Avoid probing the corners (outside the round or hexagon print surface) on a delta printer.
@@ -3563,20 +3532,10 @@ inline void gcode_G28() {
           #endif //DELTA
 
           #if ENABLED(Z_PROBE_SLED) || ENABLED(Z_PROBE_ALLEN_KEY)
-            const ProbeAction act = ProbeStay;
+            measured_z = probe_pt(xProbe, yProbe, false,                         verbose_level);
           #else
-            ProbeAction act;
-            if (deploy_probe_for_each_reading) // G29 E - Stow between probes
-              act = ProbeDeployAndStow;
-            else if (yCount == 0 && xCount == xStart)
-              act = ProbeDeploy;
-            else if (yCount == auto_bed_leveling_grid_points - 1 && xCount == xStop - xInc)
-              act = ProbeStow;
-            else
-              act = ProbeStay;
+            measured_z = probe_pt(xProbe, yProbe, deploy_probe_for_each_reading, verbose_level);
           #endif
-
-          measured_z = probe_pt(xProbe, yProbe, z_raise, act, verbose_level);
 
           #if DISABLED(DELTA)
             mean += measured_z;
@@ -3597,10 +3556,45 @@ inline void gcode_G28() {
         } //xProbe
       } //yProbe
 
+      #else // !AUTO_BED_LEVELING_GRID
+
       #if ENABLED(DEBUG_LEVELING_FEATURE)
-        if (DEBUGGING(LEVELING)) DEBUG_POS("> probing complete", current_position);
+        if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("> 3-point Leveling");
       #endif
 
+      #if ENABLED(Z_PROBE_SLED) || ENABLED(Z_PROBE_ALLEN_KEY)
+        const bool stow = false;
+      #else
+        // Actions for each probe
+        bool stow = deploy_probe_for_each_reading;
+      #endif
+
+      // Probe at 3 arbitrary points
+      float z_at_pt_1 = probe_pt( ABL_PROBE_PT_1_X + home_offset[X_AXIS],
+                                  ABL_PROBE_PT_1_Y + home_offset[Y_AXIS],
+                                  stow, verbose_level),
+            z_at_pt_2 = probe_pt( ABL_PROBE_PT_2_X + home_offset[X_AXIS],
+                                  ABL_PROBE_PT_2_Y + home_offset[Y_AXIS],
+                                  stow, verbose_level),
+            z_at_pt_3 = probe_pt( ABL_PROBE_PT_3_X + home_offset[X_AXIS],
+                                  ABL_PROBE_PT_3_Y + home_offset[Y_AXIS],
+                                  stow, verbose_level);
+
+      if (!dryrun) set_bed_level_equation_3pts(z_at_pt_1, z_at_pt_2, z_at_pt_3);
+
+    #endif // !AUTO_BED_LEVELING_GRID
+
+    // Stow the probe. Servo will raise if needed.
+    stow_z_probe();
+
+    // Restore state after probing
+    clean_up_after_endstop_or_probe_move();
+
+    #if ENABLED(DEBUG_LEVELING_FEATURE)
+      if (DEBUGGING(LEVELING)) DEBUG_POS("> probing complete", current_position);
+    #endif
+
+    #if ENABLED(AUTO_BED_LEVELING_GRID)
       #if ENABLED(DELTA)
 
         if (!dryrun) extrapolate_unprobed_bed_level();
@@ -3695,122 +3689,77 @@ inline void gcode_G28() {
             SERIAL_EOL;
           }
         } //do_topography_map
-      #endif //!DELTA
 
-    #else // !AUTO_BED_LEVELING_GRID
+        if (verbose_level > 0)
+          planner.bed_level_matrix.debug(" \n\nBed Level Correction Matrix:");
 
-      #if ENABLED(DEBUG_LEVELING_FEATURE)
-        if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("> 3-point Leveling");
-      #endif
+        if (!dryrun) {
+          /**
+           * Correct the Z height difference from Z probe position and nozzle tip position.
+           * The Z height on homing is measured by Z probe, but the Z probe is quite far
+           * from the nozzle. When the bed is uneven, this height must be corrected.
+           */
+          float x_tmp = current_position[X_AXIS] + X_PROBE_OFFSET_FROM_EXTRUDER,
+                y_tmp = current_position[Y_AXIS] + Y_PROBE_OFFSET_FROM_EXTRUDER,
+                z_tmp = current_position[Z_AXIS],
+                real_z = stepper.get_axis_position_mm(Z_AXIS);  //get the real Z (since planner.adjusted_position is now correcting the plane)
 
-      #if ENABLED(Z_PROBE_SLED) || ENABLED(Z_PROBE_ALLEN_KEY)
-        const ProbeAction p1 = ProbeStay, p2 = ProbeStay, p3 = ProbeStay;
-      #else
-        // Actions for each probe
-        ProbeAction p1, p2, p3;
-        if (deploy_probe_for_each_reading)
-          p1 = p2 = p3 = ProbeDeployAndStow;
-        else
-          p1 = ProbeDeploy, p2 = ProbeStay, p3 = ProbeStow;
-      #endif
-
-      // Probe at 3 arbitrary points
-      float z_at_pt_1 = probe_pt( ABL_PROBE_PT_1_X + home_offset[X_AXIS],
-                                  ABL_PROBE_PT_1_Y + home_offset[Y_AXIS],
-                                  Z_RAISE_BEFORE_PROBING,
-                                  p1, verbose_level),
-            z_at_pt_2 = probe_pt( ABL_PROBE_PT_2_X + home_offset[X_AXIS],
-                                  ABL_PROBE_PT_2_Y + home_offset[Y_AXIS],
-                                  Z_RAISE_BETWEEN_PROBINGS,
-                                  p2, verbose_level),
-            z_at_pt_3 = probe_pt( ABL_PROBE_PT_3_X + home_offset[X_AXIS],
-                                  ABL_PROBE_PT_3_Y + home_offset[Y_AXIS],
-                                  Z_RAISE_BETWEEN_PROBINGS,
-                                  p3, verbose_level);
-
-      if (!dryrun) set_bed_level_equation_3pts(z_at_pt_1, z_at_pt_2, z_at_pt_3);
-
-    #endif // !AUTO_BED_LEVELING_GRID
-
-    #if DISABLED(DELTA)
-      if (verbose_level > 0)
-        planner.bed_level_matrix.debug(" \n\nBed Level Correction Matrix:");
-
-      if (!dryrun) {
-        /**
-         * Correct the Z height difference from Z probe position and nozzle tip position.
-         * The Z height on homing is measured by Z probe, but the Z probe is quite far
-         * from the nozzle. When the bed is uneven, this height must be corrected.
-         */
-        float x_tmp = current_position[X_AXIS] + X_PROBE_OFFSET_FROM_EXTRUDER,
-              y_tmp = current_position[Y_AXIS] + Y_PROBE_OFFSET_FROM_EXTRUDER,
-              z_tmp = current_position[Z_AXIS],
-              real_z = stepper.get_axis_position_mm(Z_AXIS);  //get the real Z (since planner.adjusted_position is now correcting the plane)
-
-        #if ENABLED(DEBUG_LEVELING_FEATURE)
-          if (DEBUGGING(LEVELING)) {
-            SERIAL_ECHOPAIR("> BEFORE apply_rotation_xyz > z_tmp  = ", z_tmp);
-            SERIAL_EOL;
-            SERIAL_ECHOPAIR("> BEFORE apply_rotation_xyz > real_z = ", real_z);
-            SERIAL_EOL;
-          }
-        #endif
-
-        // Apply the correction sending the Z probe offset
-        apply_rotation_xyz(planner.bed_level_matrix, x_tmp, y_tmp, z_tmp);
-
-        /*
-         * Get the current Z position and send it to the planner.
-         *
-         * >> (z_tmp - real_z) : The rotated current Z minus the uncorrected Z
-         * (most recent planner.set_position_mm/sync_plan_position)
-         *
-         * >> zprobe_zoffset : Z distance from nozzle to Z probe
-         * (set by default, M851, EEPROM, or Menu)
-         *
-         * >> Z_RAISE_AFTER_PROBING : The distance the Z probe will have lifted
-         * after the last probe
-         *
-         * >> Should home_offset[Z_AXIS] be included?
-         *
-         *
-         *   Discussion: home_offset[Z_AXIS] was applied in G28 to set the
-         *   starting Z. If Z is not tweaked in G29 -and- the Z probe in G29 is
-         *   not actually "homing" Z... then perhaps it should not be included
-         *   here. The purpose of home_offset[] is to adjust for inaccurate
-         *   endstops, not for reasonably accurate probes. If it were added
-         *   here, it could be seen as a compensating factor for the Z probe.
-         */
-        #if ENABLED(DEBUG_LEVELING_FEATURE)
-          if (DEBUGGING(LEVELING)) {
-            SERIAL_ECHOPAIR("> AFTER apply_rotation_xyz > z_tmp  = ", z_tmp);
-            SERIAL_EOL;
-          }
-        #endif
-
-        current_position[Z_AXIS] = -zprobe_zoffset + (z_tmp - real_z)
-          #if HAS_Z_SERVO_ENDSTOP || ENABLED(Z_PROBE_ALLEN_KEY) || ENABLED(Z_PROBE_SLED)
-             + Z_RAISE_AFTER_PROBING
+          #if ENABLED(DEBUG_LEVELING_FEATURE)
+            if (DEBUGGING(LEVELING)) {
+              SERIAL_ECHOPAIR("> BEFORE apply_rotation_xyz > z_tmp  = ", z_tmp);
+              SERIAL_EOL;
+              SERIAL_ECHOPAIR("> BEFORE apply_rotation_xyz > real_z = ", real_z);
+              SERIAL_EOL;
+            }
           #endif
-        ;
-        // current_position[Z_AXIS] += home_offset[Z_AXIS]; // The Z probe determines Z=0, not "Z home"
-        SYNC_PLAN_POSITION_KINEMATIC();
 
-        #if ENABLED(DEBUG_LEVELING_FEATURE)
-          if (DEBUGGING(LEVELING)) DEBUG_POS("> corrected Z in G29", current_position);
-        #endif
-      }
+          // Apply the correction sending the Z probe offset
+          apply_rotation_xyz(planner.bed_level_matrix, x_tmp, y_tmp, z_tmp);
 
-    #endif // !DELTA
+          /*
+           * Get the current Z position and send it to the planner.
+           *
+           * >> (z_tmp - real_z) : The rotated current Z minus the uncorrected Z
+           * (most recent planner.set_position_mm/sync_plan_position)
+           *
+           * >> zprobe_zoffset : Z distance from nozzle to Z probe
+           * (set by default, M851, EEPROM, or Menu)
+           *
+           * >> Z_RAISE_AFTER_PROBING : The distance the Z probe will have lifted
+           * after the last probe
+           *
+           * >> Should home_offset[Z_AXIS] be included?
+           *
+           *
+           *   Discussion: home_offset[Z_AXIS] was applied in G28 to set the
+           *   starting Z. If Z is not tweaked in G29 -and- the Z probe in G29 is
+           *   not actually "homing" Z... then perhaps it should not be included
+           *   here. The purpose of home_offset[] is to adjust for inaccurate
+           *   endstops, not for reasonably accurate probes. If it were added
+           *   here, it could be seen as a compensating factor for the Z probe.
+           */
+          #if ENABLED(DEBUG_LEVELING_FEATURE)
+            if (DEBUGGING(LEVELING)) {
+              SERIAL_ECHOPAIR("> AFTER apply_rotation_xyz > z_tmp  = ", z_tmp);
+              SERIAL_EOL;
+            }
+          #endif
 
-    // Final raise of Z axis after probing.
-    raise_z_after_probing();
+          current_position[Z_AXIS] = -zprobe_zoffset + (z_tmp - real_z)
+            #if HAS_Z_SERVO_ENDSTOP || ENABLED(Z_PROBE_ALLEN_KEY) || ENABLED(Z_PROBE_SLED)
+               + Z_RAISE_AFTER_PROBING
+            #endif
+          ;
+          // current_position[Z_AXIS] += home_offset[Z_AXIS]; // The Z probe determines Z=0, not "Z home"
+          SYNC_PLAN_POSITION_KINEMATIC();
 
-    // Stow the probe. Servo will raise if needed.
-    stow_z_probe();
+          #if ENABLED(DEBUG_LEVELING_FEATURE)
+            if (DEBUGGING(LEVELING)) DEBUG_POS("> corrected Z in G29", current_position);
+          #endif
+        }
 
-    // Restore state after probing
-    clean_up_after_endstop_or_probe_move();
+      #endif // !DELTA
+    #endif // AUTO_BED_LEVELING_GRID
 
     #ifdef Z_PROBE_END_SCRIPT
       #if ENABLED(DEBUG_LEVELING_FEATURE)
@@ -4265,23 +4214,12 @@ inline void gcode_M42() {
 
     setup_for_endstop_or_probe_move();
 
-    do_probe_raise(Z_RAISE_BEFORE_PROBING);
+    do_blocking_move_to(X_probe_location - (X_PROBE_OFFSET_FROM_EXTRUDER), Y_probe_location - (Y_PROBE_OFFSET_FROM_EXTRUDER), max(current_position[Z_AXIS],Z_RAISE_BETWEEN_PROBINGS));
 
-    feedrate = XY_PROBE_FEEDRATE;
-    do_blocking_move_to_xy(X_probe_location - (X_PROBE_OFFSET_FROM_EXTRUDER), Y_probe_location - (Y_PROBE_OFFSET_FROM_EXTRUDER));
-
-    /**
-     * OK, do the initial probe to get us close to the bed.
-     * Then retrace the right amount and use that in subsequent probes
-     */
-
-    // Height before each probe (except the first)
-    float z_between = deploy_probe_for_each_reading ? Z_RAISE_BEFORE_PROBING : Z_RAISE_BETWEEN_PROBINGS;
 
     // Deploy the probe and probe the first point
     probe_pt(X_probe_location, Y_probe_location,
-      Z_RAISE_BEFORE_PROBING,
-      deploy_probe_for_each_reading ? ProbeDeployAndStow : ProbeDeploy,
+      deploy_probe_for_each_reading,
       verbose_level);
 
     randomSeed(millis());
@@ -4302,12 +4240,12 @@ inline void gcode_M42() {
         if (verbose_level > 3) {
           SERIAL_ECHOPAIR("Starting radius: ", radius);
           SERIAL_ECHOPAIR("   angle: ", angle);
-          delay(100);
+          //delay(100);
           if (dir > 0)
             SERIAL_ECHO(" Direction: Counter Clockwise \n");
           else
             SERIAL_ECHO(" Direction: Clockwise \n");
-          delay(100);
+          //delay(100);
         }
 
         for (uint8_t l = 0; l < n_legs - 1; l++) {
@@ -4346,7 +4284,7 @@ inline void gcode_M42() {
                 SERIAL_ECHOPAIR("Pulling point towards center:", X_current);
                 SERIAL_ECHOPAIR(", ", Y_current);
                 SERIAL_EOL;
-                delay(50);
+                //delay(50);
               }
             }
           #endif
@@ -4356,20 +4294,16 @@ inline void gcode_M42() {
             SERIAL_ECHOPAIR("y: ", Y_current);
             SERIAL_ECHOPAIR("  z: ", current_position[Z_AXIS]);
             SERIAL_EOL;
-            delay(55);
+            //delay(55);
           }
-          do_blocking_move_to_xy(X_current, Y_current);
+          do_blocking_move_to(X_current, Y_current, current_position[Z_AXIS]);
         } // n_legs loop
       } // n_legs
-
-      // The last probe will differ
-      bool last_probe = (n == n_samples - 1);
 
       // Probe a single point
       sample_set[n] = probe_pt(
         X_probe_location, Y_probe_location,
-        z_between,
-        deploy_probe_for_each_reading ? ProbeDeployAndStow : last_probe ? ProbeStow : ProbeStay,
+        deploy_probe_for_each_reading,
         verbose_level
       );
 
@@ -4397,7 +4331,7 @@ inline void gcode_M42() {
           SERIAL_PROTOCOL((int)n_samples);
           SERIAL_PROTOCOLPGM("   z: ");
           SERIAL_PROTOCOL_F(current_position[Z_AXIS], 6);
-          delay(50);
+          //delay(50);
           if (verbose_level > 2) {
             SERIAL_PROTOCOLPGM(" mean: ");
             SERIAL_PROTOCOL_F(mean, 6);
@@ -4408,16 +4342,9 @@ inline void gcode_M42() {
         SERIAL_EOL;
       }
 
-      // Raise before the next loop for the legs,
-      // or do the final raise after the last probe
-      if (last_probe)
-        do_probe_raise(Z_RAISE_AFTER_PROBING);
-      else if (n_legs) {
-        do_probe_raise(z_between);
-        if (!last_probe) delay(500);
-      }
-
     } // End of probe loop
+
+    stow_z_probe();
 
     if (verbose_level > 0) {
       SERIAL_PROTOCOLPGM("Mean: ");

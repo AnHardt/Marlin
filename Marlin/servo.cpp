@@ -58,7 +58,7 @@
  write()     - Sets the servo angle in degrees.  (invalid angle that is valid as pulse in microseconds is treated as microseconds)
  writeMicroseconds() - Sets the servo pulse width in microseconds
  move(pin, angle) - Sequence of attach(pin), write(angle).
-                    With DEACTIVATE_SERVOS_AFTER_MOVE it waits SERVO_DEACTIVATION_DELAY and detaches.
+                    With DEACTIVATE_SERVOS_AFTER_MOVE it waits SERVO_DELAY and detaches.
  read()      - Gets the last written servo pulse width as an angle between 0 and 180.
  readMicroseconds()   - Gets the last written servo pulse width in microseconds. (was read_us() in first release)
  attached()  - Returns true if there is a servo attached.
@@ -238,6 +238,7 @@ static void finISR(timer16_Sequence_t timer) {
     }
   #else //!WIRING
     // For arduino - in future: call here to a currently undefined function to reset the timer
+	UNUSED(timer);
   #endif
 }
 
@@ -324,8 +325,8 @@ bool Servo::attached() { return servo_info[this->servoIndex].Pin.isActive; }
 void Servo::move(int value) {
   if (this->attach(0) >= 0) {
     this->write(value);
+    delay(SERVO_DELAY);
     #if ENABLED(DEACTIVATE_SERVOS_AFTER_MOVE)
-      delay(SERVO_DEACTIVATION_DELAY);
       this->detach();
     #endif
   }
