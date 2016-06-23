@@ -1805,14 +1805,14 @@ static void clean_up_after_endstop_move() {
 
     if (endstops.z_probe_enabled) return;
 
+    // Make room for probe
+    do_probe_raise(Z_RAISE_BEFORE_PROBING);
+
     #if ENABLED(Z_PROBE_SLED)
 
       dock_sled(false);
 
     #elif HAS_Z_SERVO_ENDSTOP
-
-      // Make room for Z Servo
-      do_probe_raise(Z_RAISE_BEFORE_PROBING);
 
       // Engage Z Servo endstop if enabled
       DEPLOY_Z_SERVO();
@@ -1907,13 +1907,16 @@ static void clean_up_after_endstop_move() {
 
     if (!endstops.z_probe_enabled) return;
 
+    // Make room for the probe
+    do_probe_raise(Z_RAISE_BETWEEN_PROBINGS);
+
     #if ENABLED(Z_PROBE_SLED)
 
       dock_sled(true);
 
     #elif HAS_Z_SERVO_ENDSTOP
 
-      // Make room for the servo
+      // Make more room for the servo
       do_probe_raise(Z_RAISE_AFTER_PROBING);
 
       // Change the Z servo angle
@@ -2081,10 +2084,6 @@ static void clean_up_after_endstop_move() {
     return current_position[Z_AXIS];
   }
 
-#endif // HAS_BED_PROBE
-
-#if HAS_PROBING_PROCEDURE
-
   // Probe bed height at position (x,y), returns the measured z value
   static float probe_pt(float x, float y, bool stow = true, int verbose_level = 1) {
     #if ENABLED(DEBUG_LEVELING_FEATURE)
@@ -2145,7 +2144,7 @@ static void clean_up_after_endstop_move() {
     return measured_z;
   }
 
-#endif // AUTO_BED_LEVELING_FEATURE || Z_MIN_PROBE_REPEATABILITY_TEST
+#endif // HAS_BED_PROBE
 
 #if ENABLED(AUTO_BED_LEVELING_FEATURE)
 
@@ -3792,16 +3791,14 @@ inline void gcode_G28() {
   /**
    * G30: Do a single Z probe at the current XY
    */
-  inline void gcode_G30() {
+  inline float gcode_G30() {
 
     setup_for_endstop_or_probe_move();
 
-    deploy_z_probe();
-
-    stepper.synchronize();
-
     // TODO: clear the leveling matrix or the planner will be set incorrectly
-    float measured_z = run_z_probe(); // clears the ABL non-delta matrix only
+    float measured_z = probe_pt(current_position[X_AXIS] + X_PROBE_OFFSET_FROM_EXTRUDER,
+                                current_position[Y_AXIS] + Y_PROBE_OFFSET_FROM_EXTRUDER,
+                                true, 1);
 
     SERIAL_PROTOCOLPGM("Bed X: ");
     SERIAL_PROTOCOL(current_position[X_AXIS] + X_PROBE_OFFSET_FROM_EXTRUDER + 0.0001);
@@ -3811,11 +3808,11 @@ inline void gcode_G28() {
     SERIAL_PROTOCOL(measured_z + 0.0001);
     SERIAL_EOL;
 
-    stow_z_probe();
-
     clean_up_after_endstop_or_probe_move();
 
     report_current_position();
+    
+    return measured_z;
   }
 
 #endif // HAS_BED_PROBE
