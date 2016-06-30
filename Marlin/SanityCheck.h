@@ -439,17 +439,6 @@
 #endif
 
 /**
- * Allen Key Z probe requires Delta and Auto Bed Leveling grid
- */
-#if ENABLED(Z_PROBE_ALLEN_KEY)
-  #if !ENABLED(DELTA)
-    #error "Z_PROBE_ALLEN_KEY is only usable with DELTA."
-  #elif ENABLED(MESH_BED_LEVELING) || (ENABLED(AUTO_BED_LEVELING_FEATURE) && !ENABLED(AUTO_BED_LEVELING_GRID))
-    #error "Z_PROBE_ALLEN_KEY can only use AUTO_BED_LEVELING_GRID leveling."
-  #endif
-#endif
-
-/**
  * Dual X Carriage requirements
  */
 #if ENABLED(DUAL_X_CARRIAGE)
