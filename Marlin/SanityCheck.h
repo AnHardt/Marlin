@@ -439,6 +439,13 @@
 #endif
 
 /**
+ * Allen Key Z probe requires Delta and Auto Bed Leveling grid
+ */
+#if ENABLED(Z_PROBE_ALLEN_KEY) && (Z_HOME_DIR < 0) && ENABLED(Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN) && DISABLED(TEST_ALLEN_KEY)
+  #error "You can't home to a z min endstop with a Z_PROBE_ALLEN_KEY"
+#endif
+
+/**
  * Dual X Carriage requirements
  */
 #if ENABLED(DUAL_X_CARRIAGE)

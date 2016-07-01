@@ -502,39 +502,41 @@ const bool Z_MIN_PROBE_ENDSTOP_INVERTING = false; // set to true to invert the l
 
 // Allen key retractable z-probe as seen on many Kossel delta printers - http://reprap.org/wiki/Kossel#Automatic_bed_leveling_probe
 // Deploys by touching z-axis belt. Retracts by pushing the probe down. Uses Z_MIN_PIN.
-#define Z_PROBE_ALLEN_KEY
+//#define Z_PROBE_ALLEN_KEY
+// Allow homing with fake Allen key probe. A debug feature.
+//#define TEST_ALLEN_KEY
 
 #if ENABLED(Z_PROBE_ALLEN_KEY)
   // 2 or 3 sets of coordinates for deploying and retracting the spring loaded touch probe on G29,
   // if servo actuated touch probe is not defined. Uncomment as appropriate for your printer/probe.
 
-  // Kossel Mini - example mid back tower
+  // Cartesian: deploy far right, far back; stow with probe at X_MAX_POS,Y_MAX_POS
   #define ALLEN_KEY_DEPLOY_WAY 30.0
-  #define Z_PROBE_ALLEN_KEY_DEPLOY_1_X ALLEN_KEY_DEPLOY_WAY
-  #define Z_PROBE_ALLEN_KEY_DEPLOY_1_Y sqrt(sq(Y_MAX_POS) - sq(ALLEN_KEY_DEPLOY_WAY))
-  #define Z_PROBE_ALLEN_KEY_DEPLOY_1_Z (Z_MIN_POS + Z_MAX_POS/2)
+  #define Z_PROBE_ALLEN_KEY_DEPLOY_1_X (X_MAX_POS - ALLEN_KEY_DEPLOY_WAY)
+  #define Z_PROBE_ALLEN_KEY_DEPLOY_1_Y sqrt(sq((float)Y_MAX_POS) - sq((float)ALLEN_KEY_DEPLOY_WAY))
+  #define Z_PROBE_ALLEN_KEY_DEPLOY_1_Z (Z_MIN_POS + (Z_MAX_POS-Z_MIN_POS)/5)
   #define Z_PROBE_ALLEN_KEY_DEPLOY_1_FEEDRATE XY_PROBE_SPEED
 
-  #define Z_PROBE_ALLEN_KEY_DEPLOY_2_X 0.0
+  #define Z_PROBE_ALLEN_KEY_DEPLOY_2_X X_MAX_POS
   #define Z_PROBE_ALLEN_KEY_DEPLOY_2_Y Y_MAX_POS
-  #define Z_PROBE_ALLEN_KEY_DEPLOY_2_Z Z_PROBE_ALLEN_KEY_DEPLOY_1_Y
+  #define Z_PROBE_ALLEN_KEY_DEPLOY_2_Z Z_PROBE_ALLEN_KEY_DEPLOY_1_Z
   #define Z_PROBE_ALLEN_KEY_DEPLOY_2_FEEDRATE (XY_PROBE_SPEED/10)
 
   #define Z_PROBE_ALLEN_KEY_DEPLOY_3_X 0.0
   #define Z_PROBE_ALLEN_KEY_DEPLOY_3_Y Y_MAX_POS * 0.75
-  #define Z_PROBE_ALLEN_KEY_DEPLOY_3_Z Z_PROBE_ALLEN_KEY_DEPLOY_1_Y
+  #define Z_PROBE_ALLEN_KEY_DEPLOY_3_Z Z_PROBE_ALLEN_KEY_DEPLOY_1_Z
   #define Z_PROBE_ALLEN_KEY_DEPLOY_3_FEEDRATE XY_PROBE_SPEED
 
   #define Z_PROBE_ALLEN_KEY_STOW_DEPTH 20
   // Move the probe into position
-  #define Z_PROBE_ALLEN_KEY_STOW_1_X -64.0
-  #define Z_PROBE_ALLEN_KEY_STOW_1_Y 56.0
-  #define Z_PROBE_ALLEN_KEY_STOW_1_Z 23.0
+  #define Z_PROBE_ALLEN_KEY_STOW_1_X (X_MAX_POS - X_PROBE_OFFSET_FROM_EXTRUDER)
+  #define Z_PROBE_ALLEN_KEY_STOW_1_Y (Y_MAX_POS - Y_PROBE_OFFSET_FROM_EXTRUDER)
+  #define Z_PROBE_ALLEN_KEY_STOW_1_Z 25.0
   #define Z_PROBE_ALLEN_KEY_STOW_1_FEEDRATE XY_PROBE_SPEED
   // Move the nozzle down further to push the probe into retracted position.
   #define Z_PROBE_ALLEN_KEY_STOW_2_X  Z_PROBE_ALLEN_KEY_STOW_1_X
   #define Z_PROBE_ALLEN_KEY_STOW_2_Y  Z_PROBE_ALLEN_KEY_STOW_1_Y
-  #define Z_PROBE_ALLEN_KEY_STOW_2_Z  (Z_PROBE_ALLEN_KEY_STOW_1_Z-Z_PROBE_ALLEN_KEY_STOW_DEPTH)
+  #define Z_PROBE_ALLEN_KEY_STOW_2_Z  (Z_PROBE_ALLEN_KEY_STOW_1_Z - Z_PROBE_ALLEN_KEY_STOW_DEPTH)
   #define Z_PROBE_ALLEN_KEY_STOW_2_FEEDRATE (XY_PROBE_SPEED/10)
   // Raise things back up slightly so we don't bump into anything
   #define Z_PROBE_ALLEN_KEY_STOW_3_X  Z_PROBE_ALLEN_KEY_STOW_1_X
