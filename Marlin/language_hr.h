@@ -30,8 +30,6 @@
 #ifndef LANGUAGE_HR_H
 #define LANGUAGE_HR_H
 
-#define MAPPER_NON
-
 // Define SIMULATE_ROMFONT to see what is seen on the character based display defined in Configuration.h
 //#define SIMULATE_ROMFONT
 #define DISPLAY_CHARSET_ISO10646_1 // use the better font on full graphic displays.
