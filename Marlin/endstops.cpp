@@ -155,14 +155,21 @@ void Endstops::report_state() {
     #endif
 
     #define _ENDSTOP_HIT_ECHO(A,C) do{ \
-      SERIAL_ECHOPAIR(" " STRINGIFY(A) ":", stepper.triggered_position_mm(A ##_AXIS)); \
+      SERIAL_ECHOPAIR(" " STRINGIFY(A) "=", stepper.triggered_position_mm(A ##_AXIS)); \
       _SET_STOP_CHAR(A,C); }while(0)
 
     #define _ENDSTOP_HIT_TEST(A,C) \
       if (TEST(endstop_hit_bits, A ##_MIN) || TEST(endstop_hit_bits, A ##_MAX)) \
         _ENDSTOP_HIT_ECHO(A,C)
 
-    SERIAL_ECHO_START;
+    #if ENABLED(ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED)
+      if (stepper.abort_on_endstop_hit)
+        SERIAL_ERROR_START;
+      else
+        SERIAL_ECHO_START;
+    #else
+      SERIAL_ECHO_START;
+    #endif
     SERIAL_ECHOPGM(MSG_ENDSTOPS_HIT);
     _ENDSTOP_HIT_TEST(X, 'X');
     _ENDSTOP_HIT_TEST(Y, 'Y');
@@ -182,12 +189,14 @@ void Endstops::report_state() {
 
     hit_on_purpose();
 
-    #if ENABLED(ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED) && ENABLED(SDSUPPORT)
+    #if ENABLED(ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED)
       if (stepper.abort_on_endstop_hit) {
         card.sdprinting = false;
         card.closefile();
         quickstop_stepper();
+        for (uint8_t i = 0; i < 3; i++) axis_known_position[i] = false; // likely steps was lost
         thermalManager.disable_all_heaters(); // switch off all heaters.
+        stop(); // restart by M999
       }
     #endif
   }

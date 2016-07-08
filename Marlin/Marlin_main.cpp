@@ -227,7 +227,7 @@
  * M501 - Read parameters from EEPROM (if you need reset them after you changed them temporarily).
  * M502 - Revert to the default "factory settings". You still need to store them in EEPROM afterwards if you want to.
  * M503 - Print the current settings (from memory not from EEPROM). Use S0 to leave off headings.
- * M540 - Use S[0|1] to enable or disable the stop SD card print on endstop hit (requires ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED)
+ * M540 - Use S[0|1] to enable or disable to stop print on endstop hit (requires ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED)
  * M600 - Pause for filament change X[pos] Y[pos] Z[relative lift] E[initial retract] L[later retract distance for removal]
  * M665 - Set delta configurations: L<diagonal rod> R<delta radius> S<segments/s>
  * M666 - Set delta endstop adjustment
@@ -2394,20 +2394,10 @@ static void homeaxis(AxisEnum axis) {
     current_position[axis] = 0;
     sync_plan_position();
 
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
-      if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("> endstops.enable(false)");
-    #endif
-    endstops.enable(false); // Disable endstops while moving away
-
     // Move away from the endstop by the axis HOME_BUMP_MM
     destination[axis] = -home_bump_mm(axis) * axis_home_dir;
     line_to_destination();
     stepper.synchronize();
-
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
-      if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("> endstops.enable(true)");
-    #endif
-    endstops.enable(true); // Enable endstops for next homing move
 
     // Slow down the feedrate for the next move
     set_homing_bump_feedrate(axis);
@@ -2416,6 +2406,7 @@ static void homeaxis(AxisEnum axis) {
     destination[axis] = 2 * home_bump_mm(axis) * axis_home_dir;
     line_to_destination();
     stepper.synchronize();
+    endstops.hit_on_purpose(); // clear endstop hit flags
 
     #if ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) DEBUG_POS("> TRIGGER ENDSTOP", current_position);
@@ -2449,10 +2440,6 @@ static void homeaxis(AxisEnum axis) {
     #if ENABLED(DELTA)
       // retrace by the amount specified in endstop_adj
       if (endstop_adj[axis] * axis_home_dir < 0) {
-        #if ENABLED(DEBUG_LEVELING_FEATURE)
-          if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("> endstops.enable(false)");
-        #endif
-        endstops.enable(false); // Disable endstops while moving away
         sync_plan_position();
         destination[axis] = endstop_adj[axis];
         #if ENABLED(DEBUG_LEVELING_FEATURE)
@@ -2463,10 +2450,6 @@ static void homeaxis(AxisEnum axis) {
         #endif
         line_to_destination();
         stepper.synchronize();
-        #if ENABLED(DEBUG_LEVELING_FEATURE)
-          if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("> endstops.enable(true)");
-        #endif
-        endstops.enable(true); // Enable endstops for next homing move
       }
       #if ENABLED(DEBUG_LEVELING_FEATURE)
         else {
