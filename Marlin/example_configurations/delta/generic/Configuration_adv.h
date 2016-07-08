@@ -403,13 +403,16 @@
   // This allows hosts to request long names for files and folders with M33
   //#define LONG_FILENAME_HOST_SUPPORT
 
-  // This option allows you to abort SD printing when any endstop is triggered.
-  // This feature must be enabled with "M540 S1" or from the LCD menu.
-  // To have any effect, endstops must be enabled during SD printing.
-  // With ENDSTOPS_ONLY_FOR_HOMING you must send "M120" to enable endstops.
-  //#define ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED
-
 #endif // SDSUPPORT
+
+// This option allows you to abort printing when any endstop is triggered.
+// This feature must be enabled with "M540 S1" or from the LCD menu
+// or by #define DEFAULT_ABORT_ON_ENDSTOP_HIT true.
+// To have any effect, endstops must be enabled during printing.
+// With ENDSTOPS_ONLY_FOR_HOMING you must send "M120" to enable endstops.
+//#define ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED
+//#define DEFAULT_ABORT_ON_ENDSTOP_HIT true
+
 
 // for dogm lcd displays you can choose some additional fonts:
 #if ENABLED(DOGLCD)

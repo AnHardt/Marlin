@@ -83,7 +83,11 @@ class Stepper {
     static block_t* current_block;  // A pointer to the block currently being traced
 
     #if ENABLED(ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED)
-      static bool abort_on_endstop_hit;
+      #if defined(DEFAULT_ABORT_ON_ENDSTOP_HIT)
+        static bool abort_on_endstop_hit = DEFAULT_ABORT_ON_ENDSTOP_HIT;
+      #else
+        static bool abort_on_endstop_hit = false;
+      #endif
     #endif
 
     #if ENABLED(Z_DUAL_ENDSTOPS)
