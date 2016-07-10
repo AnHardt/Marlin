@@ -1967,7 +1967,9 @@ static void clean_up_after_endstop_or_probe_move() {
     if (endstops.z_probe_enabled == deploy) return false;
 
     // Make room for probe
+    report_current_position();
     do_probe_raise(_Z_RAISE_PROBE_DEPLOY_STOW);
+    report_current_position();
 
     #if ENABLED(Z_PROBE_SLED)
       if (axis_unhomed_error(true, false, false)) { stop(); return true; }
@@ -2123,14 +2125,17 @@ static void clean_up_after_endstop_or_probe_move() {
         SERIAL_ECHOPAIR(", ", y);
         SERIAL_ECHOPAIR(", ", stow ? "stow" : "no stow");
         SERIAL_ECHOLNPGM(")");
-        DEBUG_POS("", current_position);
+        report_current_position();
+
       }
     #endif
 
     float old_feedrate = feedrate;
 
     // Ensure a minimum height before moving the probe
+    report_current_position();
     do_probe_raise(Z_RAISE_BETWEEN_PROBINGS);
+    report_current_position();
 
     // Move to the XY where we shall probe
     #if ENABLED(DEBUG_LEVELING_FEATURE)
@@ -2141,14 +2146,18 @@ static void clean_up_after_endstop_or_probe_move() {
       }
     #endif
     feedrate = XY_PROBE_FEEDRATE;
+    report_current_position();
     do_blocking_move_to_xy(x - (X_PROBE_OFFSET_FROM_EXTRUDER), y - (Y_PROBE_OFFSET_FROM_EXTRUDER));
+    report_current_position();
 
     #if ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) SERIAL_ECHOPGM("> ");
     #endif
     if (DEPLOY_PROBE()) return NAN;
 
+    report_current_position();
     float measured_z = run_z_probe();
+    report_current_position();
 
     if (stow) {
       #if ENABLED(DEBUG_LEVELING_FEATURE)
@@ -3328,7 +3337,7 @@ inline void gcode_G28() {
     #if ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) {
         SERIAL_ECHOLNPGM(">>> gcode_G29");
-        DEBUG_POS("", current_position);
+        report_current_position();
       }
     #endif
 
@@ -3410,6 +3419,7 @@ inline void gcode_G28() {
           vector_3 corrected_position = planner.adjusted_position();
           DEBUG_POS("BEFORE matrix.set_to_identity", corrected_position);
           DEBUG_POS("BEFORE matrix.set_to_identity", current_position);
+          report_current_position();
         }
       #endif
 
@@ -3442,7 +3452,9 @@ inline void gcode_G28() {
     setup_for_endstop_or_probe_move();
 
     // Deploy the probe. Probe will raise if needed.
+    report_current_position();
     if (DEPLOY_PROBE()) return;
+    report_current_position();
 
     bed_leveling_in_progress = true;
 
@@ -3504,7 +3516,9 @@ inline void gcode_G28() {
             if (distance_from_center > DELTA_PROBEABLE_RADIUS) continue;
           #endif //DELTA
 
+          report_current_position();
           float measured_z = probe_pt(xProbe, yProbe, stow_probe_after_each, verbose_level);
+          report_current_position();
 
           #if DISABLED(DELTA)
             mean += measured_z;
