@@ -462,6 +462,7 @@ static uint8_t target_extruder;
   #define TOWER_3 Z_AXIS
 
   float delta[3] = { 0 };
+  float cartesian[3] = { 0 };
   #define SIN_60 0.8660254037844386
   #define COS_60 0.5
   float endstop_adj[3] = { 0 };
@@ -2064,6 +2065,12 @@ static void clean_up_after_endstop_or_probe_move() {
     return false;
   }
 
+  #if ENABLED(DELTA)
+    #define SET_CURRENT_FROM_STEPPERS() set_current_from_steppers()
+  #else
+    #define SET_CURRENT_FROM_STEPPERS() current_position[Z_AXIS] = stepper.get_axis_position_mm(Z_AXIS)
+  #endif
+
   // Do a single Z probe and return with current_position[Z_AXIS]
   // at the height where the probe triggered.
   static float run_z_probe() {
@@ -2079,8 +2086,8 @@ static void clean_up_after_endstop_or_probe_move() {
     do_blocking_move_to_z(current_position[Z_AXIS], Z_PROBE_SPEED_FAST);
     endstops.hit_on_purpose(); // clear endstop hit flags
     // Get the current stepper position after bumping an endstop
-    current_position[Z_AXIS] = stepper.get_axis_position_mm(Z_AXIS);
-    SYNC_PLAN_POSITION_KINEMATIC(); // tell the planner where we are      feedrate_mm_m = homing_feedrate_mm_m[Z_AXIS];
+    SET_CURRENT_FROM_STEPPERS();
+    SYNC_PLAN_POSITION_KINEMATIC(); // tell the planner where we are
 
     // move up the retract distance
     current_position[Z_AXIS] += home_bump_mm(Z_AXIS);
@@ -2091,7 +2098,7 @@ static void clean_up_after_endstop_or_probe_move() {
     do_blocking_move_to_z(current_position[Z_AXIS], Z_PROBE_SPEED_SLOW);
     endstops.hit_on_purpose(); // clear endstop hit flags
     // Get the current stepper position after bumping an endstop
-    current_position[Z_AXIS] = stepper.get_axis_position_mm(Z_AXIS);
+    SET_CURRENT_FROM_STEPPERS();
     SYNC_PLAN_POSITION_KINEMATIC(); // tell the planner where we are
 
     #if ENABLED(DEBUG_LEVELING_FEATURE)
@@ -7745,7 +7752,6 @@ void clamp_to_software_endstops(float target[3]) {
     return abs(distance - delta[TOWER_3]);
   }
 
-  float cartesian[3]; // result
   void forwardKinematics(float z1, float z2, float z3) {
     //As discussed in Wikipedia "Trilateration"
     //we are establishing a new coordinate
@@ -7768,7 +7774,7 @@ void clamp_to_software_endstops(float target[3]) {
 
     // Result is in cartesian[].
 
-    //Create a vector in old coords along x axis of new coord
+    //Create a vector in old coordinates along x axis of new coordinate
     float p12[3] = { delta_tower2_x - delta_tower1_x, delta_tower2_y - delta_tower1_y, z2 - z1 };
 
     //Get the Magnitude of vector.
@@ -7814,6 +7820,23 @@ void clamp_to_software_endstops(float target[3]) {
     cartesian[Y_AXIS] = delta_tower1_y + ex[1]*Xnew + ey[1]*Ynew - ez[1]*Znew;
     cartesian[Z_AXIS] = z1             + ex[2]*Xnew + ey[2]*Ynew - ez[2]*Znew;
   };
+
+  void forwardKinematics(float point[3]) {
+    forwardKinematics(point[X_AXIS], point[Y_AXIS], point[Z_AXIS]);
+  }
+
+  void set_cartesian_from_steppers() {
+    forwardKinematics(stepper.get_axis_position_mm(X_AXIS),
+                      stepper.get_axis_position_mm(Y_AXIS),
+                      stepper.get_axis_position_mm(Z_AXIS));
+  }
+
+  void set_current_from_steppers() {
+    set_cartesian_from_steppers();
+    current_position[X_AXIS] = cartesian[X_AXIS];
+    current_position[Y_AXIS] = cartesian[Y_AXIS];
+    current_position[Z_AXIS] = cartesian[Z_AXIS];
+  }
 
   #if ENABLED(AUTO_BED_LEVELING_FEATURE)
 
