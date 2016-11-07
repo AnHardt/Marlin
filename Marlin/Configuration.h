@@ -1141,6 +1141,10 @@
 //#define LCD_FEEDBACK_FREQUENCY_DURATION_MS 100
 //#define LCD_FEEDBACK_FREQUENCY_HZ 1000
 
+// LCD_BENCHMARK gives some timing output on the serial.
+// Switch off during normal use.
+//#define LCD_BENCHMARK
+
 //
 // CONTROLLER TYPE: Standard
 //

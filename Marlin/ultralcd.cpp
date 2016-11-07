@@ -2712,6 +2712,12 @@ void lcd_update() {
       lcdDrawUpdate = LCDVIEW_REDRAW_NOW;
     }
 
+    #ifdef LCD_BENCHMARK
+      static millis_t lcd_time = 0;
+      static millis_t lcd_time_summ = 0;
+      millis_t lcd_time_helper;
+    #endif
+
     if (lcdDrawUpdate) {
 
       switch (lcdDrawUpdate) {
@@ -2742,12 +2748,39 @@ void lcd_update() {
           u8g.setColorIndex(dot_color); // Set color for the alive dot
           u8g.drawPixel(127, 63); // draw alive dot
           u8g.setColorIndex(1); // black on white
+          #ifdef LCD_BENCHMARK
+            lcd_time = millis();
+          #endif
           CURRENTSCREEN();
+          #ifdef LCD_BENCHMARK
+            SERIAL_ECHO_START;
+            SERIAL_ECHO("LCD_update: ");
+            lcd_time_helper = millis() - lcd_time;
+            SERIAL_ECHOLN(lcd_time_helper);
+            lcd_time_summ += lcd_time_helper;
+          #endif
         } while (u8g.nextPage());
       #else
+        #ifdef LCD_BENCHMARK
+          lcd_time = millis();
+        #endif
         CURRENTSCREEN();
+        #ifdef LCD_BENCHMARK
+          SERIAL_ECHO_START;
+          SERIAL_ECHO("LCD_update: ");
+          lcd_time_helper = millis() - lcd_time;
+          SERIAL_ECHOLN(lcd_time_helper);
+          lcd_time_summ += lcd_time_helper;
+        #endif
       #endif
     }
+
+    #ifdef LCD_BENCHMARK
+      SERIAL_ECHO_START;
+      SERIAL_ECHO("LCD_update_summ: ");
+      SERIAL_ECHOLN(lcd_time_summ);
+      lcd_time_summ = 0;
+    #endif
 
     #if ENABLED(ULTIPANEL)
 
