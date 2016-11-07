@@ -1143,7 +1143,7 @@
 
 // LCD_BENCHMARK gives some timing output on the serial.
 // Switch off during normal use.
-//#define LCD_BENCHMARK
+#define LCD_BENCHMARK
 
 //
 // CONTROLLER TYPE: Standard
@@ -1220,7 +1220,7 @@
 // RepRapDiscount FULL GRAPHIC Smart Controller
 // http://reprap.org/wiki/RepRapDiscount_Full_Graphic_Smart_Controller
 //
-//#define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
+#define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
 
 //
 // MakerLab Mini Panel with graphic
