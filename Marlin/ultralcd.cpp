@@ -2707,7 +2707,8 @@ void lcd_update() {
       #if ENABLED(ULTIPANEL)
         currentScreen == lcd_status_screen &&
       #endif
-        !lcd_status_update_delay--) {
+        !lcd_status_update_delay--) 
+    {
       lcd_status_update_delay = 9;
       lcdDrawUpdate = LCDVIEW_REDRAW_NOW;
     }
@@ -2740,9 +2741,11 @@ void lcd_update() {
 
       #if ENABLED(DOGLCD)  // Changes due to different driver architecture of the DOGM display
         static int8_t dot_color = 0;
-        dot_color = 1 - dot_color;
-        u8g.firstPage();
-        do {
+        if(lcd_status_update_delay == 9) {
+          u8g.firstPage();
+          dot_color = 1 - dot_color;
+        }
+        //do {
           lcd_setFont(FONT_MENU);
           u8g.setPrintPos(125, 0);
           u8g.setColorIndex(dot_color); // Set color for the alive dot
@@ -2751,7 +2754,10 @@ void lcd_update() {
           #ifdef LCD_BENCHMARK
             lcd_time = millis();
           #endif
-          CURRENTSCREEN();
+          if( lcd_status_update_delay != 1 && lcd_status_update_delay & 1 ) {
+            CURRENTSCREEN();
+            u8g.nextPage();
+          }
           #ifdef LCD_BENCHMARK
             SERIAL_ECHO_START;
             SERIAL_ECHO("LCD_update: ");
@@ -2759,12 +2765,12 @@ void lcd_update() {
             SERIAL_ECHOLN(lcd_time_helper);
             lcd_time_summ += lcd_time_helper;
           #endif
-        } while (u8g.nextPage());
+        //} while (u8g.nextPage());
       #else
         #ifdef LCD_BENCHMARK
           lcd_time = millis();
         #endif
-        CURRENTSCREEN();
+        if( !lcd_status_update_delay) CURRENTSCREEN();
         #ifdef LCD_BENCHMARK
           SERIAL_ECHO_START;
           SERIAL_ECHO("LCD_update: ");
@@ -2775,34 +2781,36 @@ void lcd_update() {
       #endif
     }
 
-    #ifdef LCD_BENCHMARK
-      SERIAL_ECHO_START;
-      SERIAL_ECHO("LCD_update_summ: ");
-      SERIAL_ECHOLN(lcd_time_summ);
-      lcd_time_summ = 0;
-    #endif
+    if( !lcd_status_update_delay) {
+      #ifdef LCD_BENCHMARK
+        SERIAL_ECHO_START;
+        SERIAL_ECHO("LCD_update_summ: ");
+        SERIAL_ECHOLN(lcd_time_summ);
+        lcd_time_summ = 0;
+      #endif
 
-    #if ENABLED(ULTIPANEL)
-
-      // Return to Status Screen after a timeout
-      if (currentScreen == lcd_status_screen || defer_return_to_status)
-        return_to_status_ms = ms + LCD_TIMEOUT_TO_STATUS;
-      else if (ELAPSED(ms, return_to_status_ms))
-        lcd_return_to_status();
-
-    #endif // ULTIPANEL
-
-    switch (lcdDrawUpdate) {
-      case LCDVIEW_CLEAR_CALL_REDRAW:
-        lcd_implementation_clear();
-      case LCDVIEW_CALL_REDRAW_NEXT:
-        lcdDrawUpdate = LCDVIEW_REDRAW_NOW;
-        break;
-      case LCDVIEW_REDRAW_NOW:
-        lcdDrawUpdate = LCDVIEW_NONE;
-        break;
-      case LCDVIEW_NONE:
-        break;
+      #if ENABLED(ULTIPANEL)
+  
+        // Return to Status Screen after a timeout
+        if (currentScreen == lcd_status_screen || defer_return_to_status)
+          return_to_status_ms = ms + LCD_TIMEOUT_TO_STATUS;
+        else if (ELAPSED(ms, return_to_status_ms))
+          lcd_return_to_status();
+  
+      #endif // ULTIPANEL
+  
+      switch (lcdDrawUpdate) {
+        case LCDVIEW_CLEAR_CALL_REDRAW:
+          lcd_implementation_clear();
+        case LCDVIEW_CALL_REDRAW_NEXT:
+          lcdDrawUpdate = LCDVIEW_REDRAW_NOW;
+          break;
+        case LCDVIEW_REDRAW_NOW:
+          lcdDrawUpdate = LCDVIEW_NONE;
+          break;
+        case LCDVIEW_NONE:
+          break;
+      }
     }
 
   }
