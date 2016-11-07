@@ -383,45 +383,6 @@ static void lcd_implementation_status_screen() {
   // Status Menu Font for SD info, Heater status, Fan, XYZ
   lcd_setFont(FONT_STATUSMENU);
 
-  #if ENABLED(SDSUPPORT)
-    // SD Card Symbol
-    u8g.drawBox(42, 42 - (TALL_FONT_CORRECTION), 8, 7);
-    u8g.drawBox(50, 44 - (TALL_FONT_CORRECTION), 2, 5);
-    u8g.drawFrame(42, 49 - (TALL_FONT_CORRECTION), 10, 4);
-    u8g.drawPixel(50, 43 - (TALL_FONT_CORRECTION));
-
-    // Progress bar frame
-    u8g.drawFrame(54, 49, 73, 4 - (TALL_FONT_CORRECTION));
-
-    // SD Card Progress bar and clock
-    if (IS_SD_PRINTING) {
-      // Progress bar solid part
-      u8g.drawBox(55, 50, (unsigned int)(71 * card.percentDone() * 0.01), 2 - (TALL_FONT_CORRECTION));
-    
-      #if ENABLED(DOGM_SD_PERCENT)
-        // Percent complete
-        u8g.setPrintPos(55, 48);
-        u8g.print(itostr3(card.percentDone()));
-        u8g.print('%');
-      #endif
-    }
-
-    char buffer[10];
-    duration_t elapsed = print_job_timer.duration();
-    bool has_days = (elapsed.value > 60*60*24L);
-    elapsed.toDigital(buffer, has_days);
-
-    #if DISABLED(DOGM_SD_PERCENT)
-      #define SD_DURATION_X 71
-    #else
-      #define SD_DURATION_X 89
-    #endif
-
-    u8g.setPrintPos(SD_DURATION_X + (has_days ? 0 : 9), 48);
-    lcd_print(buffer);
-
-  #endif
-
   // Extruders
   HOTEND_LOOP() _draw_heater_status(5 + e * 25, e);
 
@@ -468,7 +429,7 @@ static void lcd_implementation_status_screen() {
   u8g.setPrintPos(91, XYZ_BASELINE);
   lcd_print(ftostr52sp(current_position[Z_AXIS] + 0.00001));
 
-  u8g.setColorIndex(1); // black on white
+  //u8g.setColorIndex(1); // black on white
 
   // Feedrate
   lcd_setFont(FONT_MENU);
@@ -479,6 +440,45 @@ static void lcd_implementation_status_screen() {
   u8g.setPrintPos(12, 49);
   lcd_print(itostr3(feedrate_percentage));
   u8g.print('%');
+
+  #if ENABLED(SDSUPPORT)
+    // SD Card Symbol
+    u8g.drawBox(42, 42 - (TALL_FONT_CORRECTION), 8, 7);
+    u8g.drawBox(50, 44 - (TALL_FONT_CORRECTION), 2, 5);
+    u8g.drawFrame(42, 49 - (TALL_FONT_CORRECTION), 10, 4);
+    u8g.drawPixel(50, 43 - (TALL_FONT_CORRECTION));
+
+    // Progress bar frame
+    u8g.drawFrame(54, 49, 73, 4 - (TALL_FONT_CORRECTION));
+
+    // SD Card Progress bar and clock
+    if (IS_SD_PRINTING) {
+      // Progress bar solid part
+      u8g.drawBox(55, 50, (unsigned int)(71 * card.percentDone() * 0.01), 2 - (TALL_FONT_CORRECTION));
+    
+      #if ENABLED(DOGM_SD_PERCENT)
+        // Percent complete
+        u8g.setPrintPos(55, 48);
+        u8g.print(itostr3(card.percentDone()));
+        u8g.print('%');
+      #endif
+    }
+
+    char buffer[10];
+    duration_t elapsed = print_job_timer.duration();
+    bool has_days = (elapsed.value > 60*60*24L);
+    elapsed.toDigital(buffer, has_days);
+
+    #if DISABLED(DOGM_SD_PERCENT)
+      #define SD_DURATION_X 71
+    #else
+      #define SD_DURATION_X 89
+    #endif
+
+    u8g.setPrintPos(SD_DURATION_X + (has_days ? 0 : 9), 48);
+    lcd_print(buffer);
+
+  #endif
 
   // Status line
   #if ENABLED(USE_SMALL_INFOFONT)
