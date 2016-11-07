@@ -447,11 +447,11 @@ static void lcd_implementation_status_screen() {
   #define XYZ_BASELINE 38
 
   #if ENABLED(USE_SMALL_INFOFONT)
-    u8g.drawBox(0, 30, LCD_PIXEL_WIDTH, 10);
+    u8g.drawFrame(0, 30, LCD_PIXEL_WIDTH, 10);
   #else
-    u8g.drawBox(0, 30, LCD_PIXEL_WIDTH, 9);
+    u8g.drawFrame(0, 30, LCD_PIXEL_WIDTH, 9);
   #endif
-  u8g.setColorIndex(0); // white on black
+  //u8g.setColorIndex(0); // white on black
 
   u8g.setPrintPos(2, XYZ_BASELINE);
   _draw_axis_label(X_AXIS, PSTR(MSG_X), blink);
