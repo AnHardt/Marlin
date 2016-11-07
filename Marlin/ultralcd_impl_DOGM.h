@@ -139,12 +139,10 @@
 // LCD selection
 #if ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
   //U8GLIB_ST7920_128X64_4X u8g(LCD_PINS_RS); // 2 stripes
-  //U8GLIB_ST7920_128X64_2X u8g(LCD_PINS_RS); // 4 stripes
   //U8GLIB_ST7920_128X64    u8g(LCD_PINS_RS); // 8 stripes
   U8GLIB_ST7920_128X64_4X u8g(LCD_PINS_RS);
 #elif ENABLED(U8GLIB_ST7920)
   //U8GLIB_ST7920_128X64_4X u8g(LCD_PINS_D4, LCD_PINS_ENABLE, LCD_PINS_RS); // original u8glib device - 2 stripes
-  //U8GLIB_ST7920_128X64_2X u8g(LCD_PINS_D4, LCD_PINS_ENABLE, LCD_PINS_RS); // original u8glib device - 4 stripes
   //U8GLIB_ST7920_128X64    u8g(LCD_PINS_D4, LCD_PINS_ENABLE, LCD_PINS_RS); // original u8glib device - 8 stripes
   // Set PAGE_HEIGHT in ultralcd_st7920_u8glib_rrd.h to alter number of stripes
   U8GLIB_ST7920_128X64_RRD u8g(0); 
