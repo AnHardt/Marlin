@@ -74,7 +74,7 @@
 #elif F_CPU == 16000000
   #define CPU_ST7920_DELAY_1 DELAY_0_NOP
   #define CPU_ST7920_DELAY_2 DELAY_0_NOP
-  #define CPU_ST7920_DELAY_3 DELAY_1_NOP
+  #define CPU_ST7920_DELAY_3 DELAY_0_NOP
 #else
   #error "No valid condition for delays in 'ultralcd_st7920_u8glib_rrd.h'"
 #endif
