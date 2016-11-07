@@ -277,7 +277,7 @@
       // Pins for DOGM SPI LCD Support
       #define DOGLCD_A0        44
       #define DOGLCD_CS        45
-      #define LCD_SCREEN_ROT_180
+      //#define LCD_SCREEN_ROT_180
 
       #define BTN_EN1          22
       #define BTN_EN2           7
