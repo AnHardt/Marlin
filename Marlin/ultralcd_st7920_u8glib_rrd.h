@@ -106,13 +106,13 @@ static void ST7920_SWSPI_SND_8BIT(uint8_t val) {
   ST7920_SND_BIT; // 8
 }
 
-#define ST7920_CS()              { WRITE(ST7920_CS_PIN,1); u8g_10MicroDelay(); }
+#define U8G10DELAY 5
+#define ST7920_CS()              { WRITE(ST7920_CS_PIN,1); delayMicroseconds(U8G10DELAY); }
 #define ST7920_NCS()             { WRITE(ST7920_CS_PIN,0); }
-#define ST7920_SET_CMD()         { ST7920_SWSPI_SND_8BIT(0xf8); u8g_10MicroDelay(); }
-#define ST7920_SET_DAT()         { ST7920_SWSPI_SND_8BIT(0xfa); u8g_10MicroDelay(); }
-#define ST7920_WRITE_BYTE(a)     { ST7920_SWSPI_SND_8BIT((uint8_t)((a)&0xf0u)); ST7920_SWSPI_SND_8BIT((uint8_t)((a)<<4u)); u8g_10MicroDelay(); }
-#define ST7920_WRITE_BYTES(p,l)  do{   \
-  for (uint8_t i = l + 1 ; --i;) {     \
+#define ST7920_SET_CMD()         { ST7920_SWSPI_SND_8BIT(0xf8); delayMicroseconds(U8G10DELAY); }
+#define ST7920_SET_DAT()         { ST7920_SWSPI_SND_8BIT(0xfa); delayMicroseconds(U8G10DELAY); }
+#define ST7920_WRITE_BYTE(a)     { ST7920_SWSPI_SND_8BIT((uint8_t)((a)&0xf0u)); ST7920_SWSPI_SND_8BIT((uint8_t)((a)<<4u)); delayMicroseconds(U8G10DELAY); }
+#define ST7920_WRITE_BYTES(p)  do{   \
     ST7920_SWSPI_SND_8BIT(p[0]&0xf0);  \
     ST7920_SWSPI_SND_8BIT(p[0]<<4);    \
     ST7920_SWSPI_SND_8BIT(p[1]&0xf0);  \
@@ -146,8 +146,7 @@ static void ST7920_SWSPI_SND_8BIT(uint8_t val) {
     ST7920_SWSPI_SND_8BIT(p[15]&0xf0); \
     ST7920_SWSPI_SND_8BIT(p[15]<<4);   \
     p += 16;                           \
-  }                                    \
-  u8g_10MicroDelay();                  \
+  delayMicroseconds(U8G10DELAY);                  \
 }while(0)
 
 uint8_t u8g_dev_rrd_st7920_128x64_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, void *arg) {
@@ -205,7 +204,7 @@ uint8_t u8g_dev_rrd_st7920_128x64_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, vo
           ST7920_WRITE_BYTE(0x80 | 8);        // x = 64
         }
         ST7920_SET_DAT();
-        ST7920_WRITE_BYTES(ptr, (LCD_PIXEL_WIDTH) / 128); //ptr is incremented inside of macro
+        ST7920_WRITE_BYTES(ptr); //ptr is incremented inside of macro
         y++;
       }
       ST7920_NCS();
