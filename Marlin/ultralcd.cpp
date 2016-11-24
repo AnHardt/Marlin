@@ -2745,6 +2745,13 @@ void lcd_update() {
 
     if (LCD_HANDLER_CONDITION) {
 
+      #define U8G_BENCHMARK
+
+      #if ENABLED(U8G_BENCHMARK)
+        millis_t u8g_times[20];
+        uint8_t u8g_count = 0;
+      #endif
+
       if (lcdDrawUpdate) {
 
         switch (lcdDrawUpdate) {
@@ -2770,17 +2777,48 @@ void lcd_update() {
           dot_color = 1 - dot_color;
           u8g.firstPage();
           do {
+            #if ENABLED(U8G_BENCHMARK)
+              u8g_times[u8g_count++] = millis();
+            #endif
             lcd_setFont(FONT_MENU);
             u8g.setPrintPos(125, 0);
             u8g.setColorIndex(dot_color); // Set color for the alive dot
             u8g.drawPixel(127, 63); // draw alive dot
             u8g.setColorIndex(1); // black on white
             CURRENTSCREEN();
+            #if ENABLED(U8G_BENCHMARK)
+              u8g_times[u8g_count++] = millis();
+            #endif
           } while (u8g.nextPage());
+          #if ENABLED(U8G_BENCHMARK)
+            u8g_times[u8g_count++] = millis();
+          #endif
         #else
+          #if ENABLED(U8G_BENCHMARK)
+            u8g_times[u8g_count++] = millis();
+          #endif
           CURRENTSCREEN();
+          #if ENABLED(U8G_BENCHMARK)
+            u8g_times[u8g_count++] = millis();
+          #endif
         #endif
       }
+
+      #if ENABLED(U8G_BENCHMARK)
+        millis_t u8g_drawsum = 0;
+        millis_t u8g_transsum = 0;
+        SERIAL_ECHO_START;
+        for ( uint8_t i = 0; i < u8g_count-1; i += 2) {
+          SERIAL_ECHOPAIR(" #:", u8g_times[i+1] - u8g_times[i]);
+          u8g_drawsum += u8g_times[i+1] - u8g_times[i];
+          SERIAL_ECHOPAIR(" >:", u8g_times[i+2] - u8g_times[i+1]);
+          u8g_transsum += u8g_times[i+2] - u8g_times[i+1];
+        }
+        SERIAL_ECHOPAIR(" S#:", u8g_drawsum);
+        SERIAL_ECHOPAIR(" S>:", u8g_transsum);
+        SERIAL_ECHOPAIR(" S:", u8g_drawsum + u8g_transsum);
+        SERIAL_EOL;
+      #endif
 
       #if ENABLED(ULTIPANEL)
 
