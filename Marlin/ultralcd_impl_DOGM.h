@@ -186,7 +186,7 @@ static char currentfont = 0;
 u8g_page_t &page = ((u8g_pb_t *)((u8g.getU8g())->dev->dev_mem))->p;
 
 // For selective rendering within a Y range
-#define PAGE_CONTAINS(ya, yb) (page.page_y0 <= (yb) && ((ya) ? page.page_y1 >= (ya) : true))
+#define PAGE_CONTAINS(ya, yb) (u8g.getU8g()->current_page.y0 <= (yb) && u8g.getU8g()->current_page.y1 >= (ya))
 
 static void lcd_setFont(const char font_nr) {
   switch (font_nr) {
@@ -423,7 +423,7 @@ static void lcd_implementation_status_screen() {
     // SD Card Symbol
     //
 
-    if (PAGE_CONTAINS(42 - (TALL_FONT_CORRECTION), 51 - (TALL_FONT_CORRECTION))) {
+    if (PAGE_CONTAINS(43 - (TALL_FONT_CORRECTION), 52 - (TALL_FONT_CORRECTION))) {
 /*      // Upper box
       u8g.drawBox(42, 42 - (TALL_FONT_CORRECTION), 8, 7);     // 42-48 (or 41-47)
       // Right edge
@@ -433,10 +433,9 @@ static void lcd_implementation_status_screen() {
       // Corner pixel
       u8g.drawPixel(50, 43 - (TALL_FONT_CORRECTION));         // 43 (or 42)
 */
+      u8g.drawBitmapP(43, 43 - (TALL_FONT_CORRECTION), STATUS_SD0_BYTEWIDTH, STATUS_SD0_HEIGHT, sd0_graphic);
       if (IS_SD_INSERTED)
-        u8g.drawBitmapP(40, 42, STATUS_SD1_BYTEWIDTH, STATUS_SD1_HEIGHT, sd1_graphic);
-      else
-        u8g.drawBitmapP(40, 42, STATUS_SD0_BYTEWIDTH, STATUS_SD0_HEIGHT, sd0_graphic);
+        u8g.drawBitmapP(43, 50 - (TALL_FONT_CORRECTION), STATUS_SD1_BYTEWIDTH, STATUS_SD1_HEIGHT, sd1_graphic);
     }
 
     //

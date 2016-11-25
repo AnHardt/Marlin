@@ -2789,6 +2789,10 @@ void lcd_update() {
             #if ENABLED(U8G_BENCHMARK)
               u8g_times[u8g_count++] = millis();
             #endif
+                  SERIAL_ECHO((int)u8g.getU8g()->current_page.y0);
+                  SERIAL_ECHO("-");
+                  SERIAL_ECHO((int)u8g.getU8g()->current_page.y1);
+                  SERIAL_EOL;
           } while (u8g.nextPage());
           #if ENABLED(U8G_BENCHMARK)
             u8g_times[u8g_count++] = millis();

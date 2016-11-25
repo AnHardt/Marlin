@@ -421,11 +421,12 @@
   #endif // Extruders
 #endif // HAS_TEMP_BED
 
-#define STATUS_SD0_WIDTH 8
-#define STATUS_SD0_BYTEWIDTH 1
-#define STATUS_SD0_HEIGHT 7
-
 #if ENABLED(SDSUPPORT)
+
+  #define STATUS_SD0_WIDTH 8
+  #define STATUS_SD0_BYTEWIDTH 1
+  #define STATUS_SD0_HEIGHT 7
+
   const unsigned char sd0_graphic[STATUS_SD0_BYTEWIDTH*STATUS_SD0_HEIGHT] PROGMEM =
   {
      0xfc
@@ -437,20 +438,13 @@
     ,0xff
   };
 
-#define STATUS_SD1_WIDTH 8
-#define STATUS_SD1_BYTEWIDTH 1
-#define STATUS_SD1_HEIGHT 10
+  #define STATUS_SD1_WIDTH 8
+  #define STATUS_SD1_BYTEWIDTH 1
+  #define STATUS_SD1_HEIGHT 3
 
   const unsigned char sd1_graphic[STATUS_SD1_BYTEWIDTH*STATUS_SD1_HEIGHT] PROGMEM =
   {
-    0xfc
-   ,0x82
-   ,0x81
-   ,0x81
-   ,0x81
-   ,0x81
-   ,0xff
-   ,0x81
+    0x81
    ,0x81
    ,0xff
   };
