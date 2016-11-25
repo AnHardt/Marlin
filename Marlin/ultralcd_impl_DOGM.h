@@ -116,7 +116,7 @@
 #define FONT_MENU 4
 
 // DOGM parameters (size in pixels)
-#define DOG_CHAR_WIDTH         6
+ #define DOG_CHAR_WIDTH         6
 #define DOG_CHAR_HEIGHT        12
 #if ENABLED(USE_BIG_EDIT_FONT)
   #define FONT_MENU_EDIT_NAME u8g_font_9x18
@@ -424,7 +424,7 @@ static void lcd_implementation_status_screen() {
     //
 
     if (PAGE_CONTAINS(42 - (TALL_FONT_CORRECTION), 51 - (TALL_FONT_CORRECTION))) {
-      // Upper box
+/*      // Upper box
       u8g.drawBox(42, 42 - (TALL_FONT_CORRECTION), 8, 7);     // 42-48 (or 41-47)
       // Right edge
       u8g.drawBox(50, 44 - (TALL_FONT_CORRECTION), 2, 5);     // 44-48 (or 43-47)
@@ -432,6 +432,11 @@ static void lcd_implementation_status_screen() {
       u8g.drawFrame(42, 49 - (TALL_FONT_CORRECTION), 10, 4);  // 49-52 (or 48-51)
       // Corner pixel
       u8g.drawPixel(50, 43 - (TALL_FONT_CORRECTION));         // 43 (or 42)
+*/
+      if (IS_SD_INSERTED)
+        u8g.drawBitmapP(40, 42, STATUS_SD1_BYTEWIDTH, STATUS_SD1_HEIGHT, sd1_graphic);
+      else
+        u8g.drawBitmapP(40, 42, STATUS_SD0_BYTEWIDTH, STATUS_SD0_HEIGHT, sd0_graphic);
     }
 
     //
@@ -509,8 +514,9 @@ static void lcd_implementation_status_screen() {
   // At the first page, set a flag to regenerate XYZ strings
   if (page.page == 0) remake_strings = true;
 
-  if (PAGE_CONTAINS(30, 39)) {
-    u8g.drawBox(0, 30, LCD_PIXEL_WIDTH, INFO_FONT_HEIGHT + 2); // 10: 30-39  9: 30-37
+  if (PAGE_CONTAINS(29, 39)) {
+    //u8g.drawBox(0, 30, LCD_PIXEL_WIDTH, INFO_FONT_HEIGHT + 2); // 10: 30-39  9: 30-37
+    u8g.drawFrame(0, 29, LCD_PIXEL_WIDTH, INFO_FONT_HEIGHT + 3); // 11: 29-39  10: 29-37
 
     if (PAGE_CONTAINS(XYZ_BASELINE - INFO_FONT_HEIGHT + 1, XYZ_BASELINE)) {
 
@@ -522,7 +528,7 @@ static void lcd_implementation_status_screen() {
         strcpy(zstring, ftostr52sp(current_position[Z_AXIS] + 0.00001));
       }
 
-      u8g.setColorIndex(0); // white on black
+      //u8g.setColorIndex(0); // white on black
 
       u8g.setPrintPos(2, XYZ_BASELINE);
       _draw_axis_label(X_AXIS, PSTR(MSG_X), blink);
@@ -539,7 +545,7 @@ static void lcd_implementation_status_screen() {
       u8g.setPrintPos(91, XYZ_BASELINE);
       lcd_print(zstring);
 
-      u8g.setColorIndex(1); // black on white
+      //u8g.setColorIndex(1); // black on white
     }
   }
 
@@ -709,8 +715,8 @@ static void lcd_implementation_status_screen() {
 
   void lcd_implementation_drawedit(const char* const pstr, const char* const value=NULL) {
     uint8_t lcd_width, char_width;
-    const uint8_t labellen = lcd_strlen_P(pstr), vallen = lcd_strlen(value),
-                  rows = (labellen > LCD_WIDTH - 2 - vallen) ? 2 : 1;
+    const uint8_t labellen = lcd_strlen_P(pstr), vallen = lcd_strlen(value);
+    uint8_t rows = (labellen > LCD_WIDTH - 2 - vallen) ? 2 : 1;
 
     #if ENABLED(USE_BIG_EDIT_FONT)
       if (labellen <= LCD_WIDTH_EDIT - 1) {

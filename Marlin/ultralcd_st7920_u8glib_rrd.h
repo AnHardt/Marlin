@@ -74,7 +74,7 @@
 #elif F_CPU == 16000000
   #define CPU_ST7920_DELAY_1 DELAY_0_NOP
   #define CPU_ST7920_DELAY_2 DELAY_0_NOP
-  #define CPU_ST7920_DELAY_3 DELAY_1_NOP
+  #define CPU_ST7920_DELAY_3 DELAY_0_NOP
 #else
   #error "No valid condition for delays in 'ultralcd_st7920_u8glib_rrd.h'"
 #endif
@@ -151,6 +151,7 @@ uint8_t u8g_dev_rrd_st7920_128x64_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, vo
 
       ST7920_CS();
       for (i = 0; i < PAGE_HEIGHT; i++) {
+      //for (i = 0; i < PAGE_HEIGHT-1; i++) {
         ST7920_SET_CMD();
         if (y < 32) {
           ST7920_WRITE_BYTE(0x80 | y);       //y
