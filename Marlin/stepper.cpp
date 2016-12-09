@@ -338,7 +338,7 @@ void Stepper::isr() {
   CBI(TIMSK0, OCIE0B); //Temperature ISR
   DISABLE_STEPPER_DRIVER_INTERRUPT();
   sei();
-  
+  cleaning_buffer_counter = 2;
   if (cleaning_buffer_counter) {
     --cleaning_buffer_counter;
     current_block = NULL;
