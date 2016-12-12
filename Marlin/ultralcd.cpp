@@ -2856,10 +2856,11 @@ void lcd_update() {
     // We arrive here every ~100ms when idling often enough.
     // Instead of tracking the changes simply redraw the Info Screen ~1 time a second.
     static int8_t lcd_status_update_delay = 1; // first update one loop delayed
-    if (!lcd_status_update_delay--
+    if (
       #if ENABLED(ULTIPANEL)
-        && currentScreen == lcd_status_screen
+        currentScreen == lcd_status_screen &&
       #endif
+      !lcd_status_update_delay--
     ) {
       lcd_status_update_delay = 3 + 9;
       max_display_update_time--;

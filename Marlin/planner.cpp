@@ -990,7 +990,7 @@ void Planner::_buffer_line(const float &a, const float &b, const float &c, const
       if (segment_time < min_segment_time) {
         // buffer is draining, add extra time.  The amount of time added increases if the buffer is still emptied more.
         inverse_mm_s = 1000000.0 / (segment_time + lround(2 * (min_segment_time - segment_time) / moves_queued));
-        #if defined(XY_FREQUENCY_LIMIT)
+        #if defined(XY_FREQUENCY_LIMIT) || ENABLED(ULTRA_LCD)
           segment_time = lround(1000000.0 / inverse_mm_s);
         #endif
       }
