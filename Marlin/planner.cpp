@@ -640,6 +640,32 @@ void Planner::check_axes_activity() {
 
 #endif // PLANNER_LEVELING
 
+millis_t times[4];
+millis_t times_min = 10000000;
+millis_t times_max = 0;
+float times_avg = 0;
+millis_t times_n = 0;
+
+void planner_report(void) {
+  millis_t t = times[3]-times[0] - (times[2]-times[1]);
+  times_min = min(times_min, t);
+  times_max = max(times_max, t);
+  times_avg += t;
+  times_n++;
+  
+  SERIAL_ECHO_START;
+  SERIAL_ECHOPGM("planner:");
+  SERIAL_ECHO(t);
+  SERIAL_ECHOPGM(", min:");
+  SERIAL_ECHO(times_min);
+  SERIAL_ECHOPGM(", avg:");
+  SERIAL_ECHO(times_avg/times_n);
+  SERIAL_ECHOPGM(", max:");
+  SERIAL_ECHO(times_max);
+  SERIAL_EOL;
+}
+
+
 /**
  * Planner::_buffer_line
  *
@@ -652,6 +678,9 @@ void Planner::check_axes_activity() {
  *  extruder    - target extruder
  */
 void Planner::_buffer_line(const float &a, const float &b, const float &c, const float &e, float fr_mm_s, const uint8_t extruder) {
+
+
+times[0] = millis();
 
   // The target position of the tool in absolute steps
   // Calculate target position in absolute steps
@@ -765,7 +794,9 @@ void Planner::_buffer_line(const float &a, const float &b, const float &c, const
 
   // If the buffer is full: good! That means we are well ahead of the robot.
   // Rest here until there is room in the buffer.
+  times[1] = millis();
   while (block_buffer_tail == next_buffer_head) idle();
+  times[2] = millis();
 
   // Prepare to set up new block
   block_t* block = &block_buffer[block_buffer_head];
@@ -801,7 +832,7 @@ void Planner::_buffer_line(const float &a, const float &b, const float &c, const
   block->step_event_count = MAX4(block->steps[X_AXIS], block->steps[Y_AXIS], block->steps[Z_AXIS], esteps);
 
   // Bail if this is a zero-length block
-  if (block->step_event_count < MIN_STEPS_PER_SEGMENT) return;
+  if (block->step_event_count < MIN_STEPS_PER_SEGMENT) {times[3] = millis(); planner_report(); return;};
 
   // For a mixing extruder, get a magnified step_event_count for each
   #if ENABLED(MIXING_EXTRUDER)
@@ -1354,6 +1385,9 @@ void Planner::_buffer_line(const float &a, const float &b, const float &c, const
 
   stepper.wake_up();
 
+  times[3] = millis();
+  planner_report();
+  
 } // buffer_line()
 
 /**
