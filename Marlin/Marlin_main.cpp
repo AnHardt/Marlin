@@ -332,7 +332,7 @@ bool axis_homed[XYZ] = { false }, axis_known_position[XYZ] = { false };
  * sending commands to Marlin, and lines will be checked for sequentiality.
  * M110 N<int> sets the current line number.
  */
-static long gcode_N, gcode_LastN, Stopped_gcode_LastN = 0;
+static int32_t gcode_LastN = 0;
 
 /**
  * GCode Command Queue
@@ -965,7 +965,6 @@ void gcode_line_error(const char* err, bool doFlush = true) {
   SERIAL_ERROR_START;
   serialprintPGM(err);
   SERIAL_ERRORLN(gcode_LastN);
-  //Serial.println(gcode_N);
   if (doFlush) FlushSerialRequestResend();
   serial_count = 0;
 }
@@ -1019,7 +1018,7 @@ inline void get_serial_commands() {
           if (n2pos) npos = n2pos;
         }
 
-        gcode_N = strtol(npos + 1, NULL, 10);
+        int32_t gcode_N = strtol(npos + 1, NULL, 10);
 
         if (gcode_N != gcode_LastN + 1 && !M110) {
           gcode_line_error(PSTR(MSG_ERR_LINE_NO));
@@ -7692,7 +7691,6 @@ inline void gcode_M999() {
 
   if (code_seen('S') && code_value_bool()) return;
 
-  // gcode_LastN = Stopped_gcode_LastN;
   FlushSerialRequestResend();
 }
 
@@ -10269,7 +10267,6 @@ void stop() {
   thermalManager.disable_all_heaters();
   if (IsRunning()) {
     Running = false;
-    Stopped_gcode_LastN = gcode_LastN; // Save last g_code for restart
     SERIAL_ERROR_START;
     SERIAL_ERRORLNPGM(MSG_ERR_STOPPED);
     LCD_MESSAGEPGM(MSG_STOPPED);
