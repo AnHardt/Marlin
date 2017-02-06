@@ -60,6 +60,8 @@ int   Temperature::current_temperature_raw[HOTENDS] = { 0 },
       Temperature::current_temperature_bed_raw = 0,
       Temperature::target_temperature_bed = 0;
 
+volatile bool Temperature::in_temp_isr = false;
+
 #if ENABLED(TEMP_SENSOR_1_AS_REDUNDANT)
   float Temperature::redundant_temperature = 0.0;
 #endif
@@ -1489,6 +1491,8 @@ void Temperature::set_current_temp_raw() {
 ISR(TIMER0_COMPB_vect) { Temperature::isr(); }
 
 void Temperature::isr() {
+  if (in_temp_isr) return;
+  in_temp_isr = true;
   //Allow UART and stepper ISRs
   CBI(TIMSK0, OCIE0B); //Disable Temperature ISR
   sei();
@@ -1944,5 +1948,7 @@ void Temperature::isr() {
     }
   #endif
 
+  in_temp_isr = false;
   SBI(TIMSK0, OCIE0B); //re-enable Temperature ISR
+
 }

@@ -828,7 +828,10 @@ void Stepper::isr() {
 
     // Restore original ISR settings
     cli();
-    SBI(TIMSK0, OCIE0B);
+    if (thermalManager.in_temp_isr)
+      CBI(TIMSK0, OCIE0B);
+    else
+      SBI(TIMSK0, OCIE0B);
     ENABLE_STEPPER_DRIVER_INTERRUPT();
   }
 
