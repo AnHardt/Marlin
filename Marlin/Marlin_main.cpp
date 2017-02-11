@@ -6800,14 +6800,15 @@ inline void gcode_M226() {
  *       S<temperature> sets the target temperature. (default 150C)
  *       E<extruder> (-1 for the bed) (default 0)
  *       C<cycles>
+ *       M<mode> (1 = Classic PID | 2 = Some overshoot | 3 = No overshoot) (default 1)
  *       U<bool> with a non-zero value will apply the result to current settings
  */
 inline void gcode_M303() {
   #if HAS_PID_HEATING
     int e = code_seen('E') ? code_value_int() : 0;
     int c = code_seen('C') ? code_value_int() : 5;
+    int mode = code_seen('M') ? code_value_int() : 1;
     bool u = code_seen('U') && code_value_bool();
-
     float temp = code_seen('S') ? code_value_temp_abs() : (e < 0 ? 70.0 : 150.0);
 
     if (e >= 0 && e < HOTENDS)
@@ -6815,7 +6816,7 @@ inline void gcode_M303() {
 
     KEEPALIVE_STATE(NOT_BUSY); // don't send "busy: processing" messages during autotune output
 
-    thermalManager.PID_autotune(temp, e, c, u);
+    thermalManager.PID_autotune(temp, e, c, mode, u);
 
     KEEPALIVE_STATE(IN_HANDLER);
   #else

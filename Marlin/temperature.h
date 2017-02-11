@@ -364,7 +364,7 @@ class Temperature {
      * Perform auto-tuning for hotend or bed in response to M303
      */
     #if HAS_PID_HEATING
-      static void PID_autotune(float temp, int hotend, int ncycles, bool set_result=false);
+      static void PID_autotune(float temp, int hotend, int ncycles, int mode, bool set_result=false);
     #endif
 
     /**

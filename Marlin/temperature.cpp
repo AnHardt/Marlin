@@ -196,7 +196,7 @@ uint8_t Temperature::soft_pwm[HOTENDS];
 
 #if HAS_PID_HEATING
 
-  void Temperature::PID_autotune(float temp, int hotend, int ncycles, bool set_result/*=false*/) {
+  void Temperature::PID_autotune(float temp, int hotend, int ncycles, int mode, bool set_result/*=false*/) {
     float input = 0.0;
     int cycles = 0;
     bool heating = true;
@@ -226,11 +226,20 @@ uint8_t Temperature::soft_pwm[HOTENDS];
           0
         #endif
     ) {
-      SERIAL_ECHOLN(MSG_PID_BAD_EXTRUDER_NUM);
+      SERIAL_ECHOLNPGM(MSG_PID_BAD_EXTRUDER_NUM);
       return;
     }
 
-    SERIAL_ECHOLN(MSG_PID_AUTOTUNE_START);
+    //Tuning mode selection warnings
+    if (mode < 1 || mode > 3) {
+      SERIAL_ECHOLNPGM("Bad mode number");
+      SERIAL_ECHOLNPGM("M1 = Classic PID");
+      SERIAL_ECHOLNPGM("M2 = Some overshoot");
+      SERIAL_ECHOLNPGM("M3 = No overshoot");
+      return;
+    }
+
+    SERIAL_ECHOLNPGM(MSG_PID_AUTOTUNE_START);
 
     disable_all_heaters(); // switch off all heaters.
 
@@ -316,35 +325,36 @@ uint8_t Temperature::soft_pwm[HOTENDS];
               SERIAL_PROTOCOLPAIR(MSG_BIAS, bias);
               SERIAL_PROTOCOLPAIR(MSG_D, d);
               SERIAL_PROTOCOLPAIR(MSG_T_MIN, min);
-              SERIAL_PROTOCOLPAIR(MSG_T_MAX, max);
+              SERIAL_PROTOCOLPAIR(MSG_T_MAX, max); SERIAL_EOL;
               if (cycles > 2) {
                 Ku = (4.0 * d) / (M_PI * (max - min) * 0.5);
                 Tu = ((float)(t_low + t_high) * 0.001);
                 SERIAL_PROTOCOLPAIR(MSG_KU, Ku);
                 SERIAL_PROTOCOLPAIR(MSG_TU, Tu);
-                workKp = 0.6 * Ku;
-                workKi = 2 * workKp / Tu;
-                workKd = workKp * Tu * 0.125;
-                SERIAL_PROTOCOLLNPGM("\n" MSG_CLASSIC_PID);
-                SERIAL_PROTOCOLPAIR(MSG_KP, workKp);
-                SERIAL_PROTOCOLPAIR(MSG_KI, workKi);
-                SERIAL_PROTOCOLLNPAIR(MSG_KD, workKd);
-                /**
-                workKp = 0.33*Ku;
-                workKi = workKp/Tu;
-                workKd = workKp*Tu/3;
-                SERIAL_PROTOCOLLNPGM(" Some overshoot");
-                SERIAL_PROTOCOLPAIR(" Kp: ", workKp);
-                SERIAL_PROTOCOLPAIR(" Ki: ", workKi);
-                SERIAL_PROTOCOLPAIR(" Kd: ", workKd);
-                workKp = 0.2*Ku;
-                workKi = 2*workKp/Tu;
-                workKd = workKp*Tu/3;
-                SERIAL_PROTOCOLLNPGM(" No overshoot");
-                SERIAL_PROTOCOLPAIR(" Kp: ", workKp);
-                SERIAL_PROTOCOLPAIR(" Ki: ", workKi);
-                SERIAL_PROTOCOLPAIR(" Kd: ", workKd);
-                */
+                //Mode 1, classic PID tuning
+                if(mode == 1){
+                  workKp = 0.6 * Ku;
+                  workKi = 2 * Kp / Tu;
+                  workKd = Kp*Tu * 0.125;
+                  SERIAL_PROTOCOLLNPGM(MSG_CLASSIC_PID);
+                }
+                //Mode 2, some overshoot
+                if(mode == 2){
+                  workKp = 0.33 * Ku;
+                  workKi = Kp / Tu;
+                  workKd = Kp * Tu / 3;
+                  SERIAL_PROTOCOLLNPGM(" Some overshoot: ");
+                }
+                //Mode 3, no overshoot
+                if(mode == 3){
+                  workKp = 0.2 * Ku;
+                  workKi = 2 * Kp / Tu;
+                  workKd = Kp * Tu / 3;
+                  SERIAL_PROTOCOLLNPGM(" No overshoot: ");
+                }
+                SERIAL_PROTOCOLPAIR(MSG_KP, Kp); SERIAL_EOL;
+                SERIAL_PROTOCOLPAIR(MSG_KI, Ki); SERIAL_EOL;
+                SERIAL_PROTOCOLPAIR(MSG_KD, Kd); SERIAL_EOL;
               }
             }
             #if HAS_PID_FOR_BOTH
