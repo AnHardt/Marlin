@@ -142,6 +142,12 @@ matrix_3x3 matrix_3x3::transpose(matrix_3x3 original) {
   return new_matrix;
 }
 
+matrix_3x3 matrix_3x3::copy(matrix_3x3 target, matrix_3x3 original) {
+  for (uint8_t i = 0; i<=8; i++)
+    target[i] = original[i];
+  return target;
+}
+
 void matrix_3x3::debug(const char title[]) {
   SERIAL_PROTOCOLLN(title);
   int count = 0;

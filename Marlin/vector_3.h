@@ -71,7 +71,9 @@ struct matrix_3x3 {
   static matrix_3x3 transpose(matrix_3x3 original);
 
   void set_to_identity();
-
+  
+  matrix_3x3 matrix_3x3::copy(matrix_3x3 target, matrix_3x3 original);
+  
   void debug(const char title[]);
 };
 
