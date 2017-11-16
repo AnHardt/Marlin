@@ -86,7 +86,10 @@
 #define FONT_SPECIAL_NAME Marlin_symbols
 
 #if DISABLED(SIMULATE_ROMFONT)
-  #if ENABLED(DISPLAY_CHARSET_ISO10646_1)
+  #if ENABLED(DISPLAY_CHARSET_ASCII)
+    #include "dogm/dogm_font_data_ASCII.h"
+    #define FONT_MENU_NAME ASCII_5x7
+  #elif ENABLED(DISPLAY_CHARSET_ISO10646_1)
     #include "dogm/dogm_font_data_ISO10646_1.h"
     #define FONT_MENU_NAME ISO10646_1_5x7
   #elif ENABLED(DISPLAY_CHARSET_ISO10646_PL)
@@ -115,8 +118,8 @@
     #include "dogm/dogm_font_data_ISO10646_SK.h"
     #define FONT_MENU_NAME ISO10646_SK
   #else // fall-back
-    #include "dogm/dogm_font_data_ISO10646_1.h"
-    #define FONT_MENU_NAME ISO10646_1_5x7
+    #include "dogm/dogm_font_data_ASCII.h"
+    #define FONT_MENU_NAME ASCII_5x7
   #endif
 #else // SIMULATE_ROMFONT
   #if DISPLAY_CHARSET_HD44780 == JAPANESE
@@ -129,8 +132,8 @@
     #include "dogm/dogm_font_data_HD44780_C.h"
     #define FONT_MENU_NAME HD44780_C_5x7
   #else // fall-back
-    #include "dogm/dogm_font_data_ISO10646_1.h"
-    #define FONT_MENU_NAME ISO10646_1_5x7
+    #include "dogm/dogm_font_data_ASCII.h"
+    #define FONT_MENU_NAME ASCII_5x7
   #endif
 #endif // SIMULATE_ROMFONT
 

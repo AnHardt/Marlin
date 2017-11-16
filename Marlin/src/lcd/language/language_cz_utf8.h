@@ -36,316 +36,317 @@
 #define LANGUAGE_CZ_UTF_H
 
 #define MAPPER_C3C4C5_CZ
+#define UTF8_MAPPER C3C4C5_CZ
 #define DISPLAY_CHARSET_ISO10646_CZ
 
-#define WELCOME_MSG                         MACHINE_NAME _UxGT(" připraven.")
-#define MSG_BACK                            _UxGT("Zpět")
-#define MSG_SD_INSERTED                     _UxGT("Karta vložena")
-#define MSG_SD_REMOVED                      _UxGT("Karta vyjmuta")
-#define MSG_LCD_ENDSTOPS                    _UxGT("Endstopy") // max 8 znaku
-#define MSG_MAIN                            _UxGT("Hlavní nabídka")
-#define MSG_AUTOSTART                       _UxGT("Autostart")
-#define MSG_DISABLE_STEPPERS                _UxGT("Uvolnit motory")
-#define MSG_DEBUG_MENU                      _UxGT("Nabídka ladění")
-#define MSG_PROGRESS_BAR_TEST               _UxGT("Test uk. průběhu")
-#define MSG_AUTO_HOME                       _UxGT("Domovská pozice")
-#define MSG_AUTO_HOME_X                     _UxGT("Domů osa X")
-#define MSG_AUTO_HOME_Y                     _UxGT("Domů osa Y")
-#define MSG_AUTO_HOME_Z                     _UxGT("Domů osa Z")
-#define MSG_LEVEL_BED_HOMING                _UxGT("Měření podložky")
-#define MSG_LEVEL_BED_WAITING               _UxGT("Kliknutím spusťte")
-#define MSG_LEVEL_BED_NEXT_POINT            _UxGT("Další bod")
-#define MSG_LEVEL_BED_DONE                  _UxGT("Měření hotovo!")
-#define MSG_Z_FADE_HEIGHT                   _UxGT("Výška srovnávání")
-#define MSG_SET_HOME_OFFSETS                _UxGT("Nastavit ofsety")
-#define MSG_HOME_OFFSETS_APPLIED            _UxGT("Ofsety nastaveny")
-#define MSG_SET_ORIGIN                      _UxGT("Nastavit počátek")
-#define MSG_PREHEAT_1                       _UxGT("Zahřát PLA")
-#define MSG_PREHEAT_1_N                     MSG_PREHEAT_1 _UxGT(" ")
-#define MSG_PREHEAT_1_ALL                   MSG_PREHEAT_1 _UxGT(" vše")
-#define MSG_PREHEAT_1_END                   MSG_PREHEAT_1 _UxGT(" hotend")
-#define MSG_PREHEAT_1_BEDONLY               MSG_PREHEAT_1 _UxGT(" podlož")
-#define MSG_PREHEAT_1_SETTINGS              MSG_PREHEAT_1 _UxGT(" nast")
-#define MSG_PREHEAT_2                       _UxGT("Zahřát ABS")
-#define MSG_PREHEAT_2_N                     MSG_PREHEAT_2 _UxGT(" ")
-#define MSG_PREHEAT_2_ALL                   MSG_PREHEAT_2 _UxGT(" vše")
-#define MSG_PREHEAT_2_END                   MSG_PREHEAT_2 _UxGT(" hotend")
-#define MSG_PREHEAT_2_BEDONLY               MSG_PREHEAT_2 _UxGT(" podlož")
-#define MSG_PREHEAT_2_SETTINGS              MSG_PREHEAT_2 _UxGT(" nast")
-#define MSG_COOLDOWN                        _UxGT("Zchladit")
-#define MSG_SWITCH_PS_ON                    _UxGT("Zapnout napájení")
-#define MSG_SWITCH_PS_OFF                   _UxGT("Vypnout napájení")
-#define MSG_EXTRUDE                         _UxGT("Vytlačit (extr.)")
-#define MSG_RETRACT                         _UxGT("Zatlačit (retr.)")
-#define MSG_MOVE_AXIS                       _UxGT("Posunout osy")
-#define MSG_BED_LEVELING                    _UxGT("Vyrovnat podložku")
-#define MSG_LEVEL_BED                       _UxGT("Vyrovnat podložku")
-#define MSG_EDITING_STOPPED                 _UxGT("Konec úprav sítě")
+#define WELCOME_MSG                         MACHINE_NAME " připraven."
+#define MSG_BACK                            "Zpět"
+#define MSG_SD_INSERTED                     "Karta vložena"
+#define MSG_SD_REMOVED                      "Karta vyjmuta"
+#define MSG_LCD_ENDSTOPS                    "Endstopy" // max 8 znaku
+#define MSG_MAIN                            "Hlavní nabídka"
+#define MSG_AUTOSTART                       "Autostart"
+#define MSG_DISABLE_STEPPERS                "Uvolnit motory"
+#define MSG_DEBUG_MENU                      "Nabídka ladění"
+#define MSG_PROGRESS_BAR_TEST               "Test uk. průběhu"
+#define MSG_AUTO_HOME                       "Domovská pozice"
+#define MSG_AUTO_HOME_X                     "Domů osa X"
+#define MSG_AUTO_HOME_Y                     "Domů osa Y"
+#define MSG_AUTO_HOME_Z                     "Domů osa Z"
+#define MSG_LEVEL_BED_HOMING                "Měření podložky"
+#define MSG_LEVEL_BED_WAITING               "Kliknutím spusťte"
+#define MSG_LEVEL_BED_NEXT_POINT            "Další bod"
+#define MSG_LEVEL_BED_DONE                  "Měření hotovo!"
+#define MSG_Z_FADE_HEIGHT                   "Výška srovnávání"
+#define MSG_SET_HOME_OFFSETS                "Nastavit ofsety"
+#define MSG_HOME_OFFSETS_APPLIED            "Ofsety nastaveny"
+#define MSG_SET_ORIGIN                      "Nastavit počátek"
+#define MSG_PREHEAT_1                       "Zahřát PLA"
+#define MSG_PREHEAT_1_N                     MSG_PREHEAT_1 " "
+#define MSG_PREHEAT_1_ALL                   MSG_PREHEAT_1 " vše"
+#define MSG_PREHEAT_1_END                   MSG_PREHEAT_1 " hotend"
+#define MSG_PREHEAT_1_BEDONLY               MSG_PREHEAT_1 " podlož"
+#define MSG_PREHEAT_1_SETTINGS              MSG_PREHEAT_1 " nast"
+#define MSG_PREHEAT_2                       "Zahřát ABS"
+#define MSG_PREHEAT_2_N                     MSG_PREHEAT_2 " "
+#define MSG_PREHEAT_2_ALL                   MSG_PREHEAT_2 " vše"
+#define MSG_PREHEAT_2_END                   MSG_PREHEAT_2 " hotend"
+#define MSG_PREHEAT_2_BEDONLY               MSG_PREHEAT_2 " podlož"
+#define MSG_PREHEAT_2_SETTINGS              MSG_PREHEAT_2 " nast"
+#define MSG_COOLDOWN                        "Zchladit"
+#define MSG_SWITCH_PS_ON                    "Zapnout napájení"
+#define MSG_SWITCH_PS_OFF                   "Vypnout napájení"
+#define MSG_EXTRUDE                         "Vytlačit (extr.)"
+#define MSG_RETRACT                         "Zatlačit (retr.)"
+#define MSG_MOVE_AXIS                       "Posunout osy"
+#define MSG_BED_LEVELING                    "Vyrovnat podložku"
+#define MSG_LEVEL_BED                       "Vyrovnat podložku"
+#define MSG_EDITING_STOPPED                 "Konec úprav sítě"
 
-#define MSG_UBL_DOING_G29                   _UxGT("Provádím G29")
-#define MSG_UBL_UNHOMED                     _UxGT("Přejeďte domů")
-#define MSG_UBL_TOOLS                       _UxGT("UBL nástroje")
-#define MSG_UBL_LEVEL_BED                   _UxGT("Unified Bed Leveling")
-#define MSG_UBL_MANUAL_MESH                 _UxGT("Manuální síť bodů")
-#define MSG_UBL_BC_INSERT                   _UxGT("Vložte kartu, změřte")
-#define MSG_UBL_BC_INSERT2                  _UxGT("Změřte")
-#define MSG_UBL_BC_REMOVE                   _UxGT("Odstraňte a změřte")
-#define MSG_UBL_MOVING_TO_NEXT              _UxGT("Přesun na další")
-#define MSG_UBL_ACTIVATE_MESH               _UxGT("Aktivovat UBL")
-#define MSG_UBL_DEACTIVATE_MESH             _UxGT("Deaktivovat UBL")
-#define MSG_UBL_SET_BED_TEMP                _UxGT("Teplota podložky")
+#define MSG_UBL_DOING_G29                   "Provádím G29"
+#define MSG_UBL_UNHOMED                     "Přejeďte domů"
+#define MSG_UBL_TOOLS                       "UBL nástroje"
+#define MSG_UBL_LEVEL_BED                   "Unified Bed Leveling"
+#define MSG_UBL_MANUAL_MESH                 "Manuální síť bodů"
+#define MSG_UBL_BC_INSERT                   "Vložte kartu, změřte"
+#define MSG_UBL_BC_INSERT2                  "Změřte"
+#define MSG_UBL_BC_REMOVE                   "Odstraňte a změřte"
+#define MSG_UBL_MOVING_TO_NEXT              "Přesun na další"
+#define MSG_UBL_ACTIVATE_MESH               "Aktivovat UBL"
+#define MSG_UBL_DEACTIVATE_MESH             "Deaktivovat UBL"
+#define MSG_UBL_SET_BED_TEMP                "Teplota podložky"
 #define MSG_UBL_CUSTOM_BED_TEMP             MSG_UBL_SET_BED_TEMP
-#define MSG_UBL_SET_HOTEND_TEMP             _UxGT("Teplota hotendu")
+#define MSG_UBL_SET_HOTEND_TEMP             "Teplota hotendu"
 #define MSG_UBL_CUSTOM_HOTEND_TEMP          MSG_UBL_SET_HOTEND_TEMP
-#define MSG_UBL_EDIT_CUSTOM_MESH            _UxGT("Upravit vlastní síť")
-#define MSG_UBL_FINE_TUNE_MESH              _UxGT("Doladit síť bodů")
-#define MSG_UBL_DONE_EDITING_MESH           _UxGT("Konec úprav sítě")
-#define MSG_UBL_BUILD_CUSTOM_MESH           _UxGT("Vlastní síť")
-#define MSG_UBL_BUILD_MESH_MENU             _UxGT("Vytvořit síť")
-#define MSG_UBL_BUILD_PLA_MESH              _UxGT("Síť bodu PLA")
-#define MSG_UBL_BUILD_ABS_MESH              _UxGT("Síť bodu ABS")
-#define MSG_UBL_BUILD_COLD_MESH             _UxGT("Studená síť bodu")
-#define MSG_UBL_MESH_HEIGHT_ADJUST          _UxGT("Upravit výšku sítě")
-#define MSG_UBL_MESH_HEIGHT_AMOUNT          _UxGT("Výška")
-#define MSG_UBL_VALIDATE_MESH_MENU          _UxGT("Zkontrolovat síť")
-#define MSG_UBL_VALIDATE_PLA_MESH           _UxGT("Kontrola sítě PLA")
-#define MSG_UBL_VALIDATE_ABS_MESH           _UxGT("Kontrola sítě ABS")
-#define MSG_UBL_VALIDATE_CUSTOM_MESH        _UxGT("Kontrola vlast. sítě")
-#define MSG_UBL_CONTINUE_MESH               _UxGT("Pokračovat v síťi")
-#define MSG_UBL_MESH_LEVELING               _UxGT("Síťové rovnání")
-#define MSG_UBL_3POINT_MESH_LEVELING        _UxGT("3-bodove rovnání")
-#define MSG_UBL_GRID_MESH_LEVELING          _UxGT("Mrizkove rovnání")
-#define MSG_UBL_MESH_LEVEL                  _UxGT("Srovnat podložku")
-#define MSG_UBL_SIDE_POINTS                 _UxGT("Postranní body")
-#define MSG_UBL_MAP_TYPE                    _UxGT("Typ sítě bodu")
-#define MSG_UBL_OUTPUT_MAP                  _UxGT("Exportovat síť")
-#define MSG_UBL_OUTPUT_MAP_HOST             _UxGT("Exportovat do PC")
-#define MSG_UBL_OUTPUT_MAP_CSV              _UxGT("Exportovat do CSV")
-#define MSG_UBL_OUTPUT_MAP_BACKUP           _UxGT("Záloha do PC")
-#define MSG_UBL_INFO_UBL                    _UxGT("Info o UBL do PC")
-#define MSG_UBL_EDIT_MESH_MENU              _UxGT("Upravit síť bodů")
-#define MSG_UBL_FILLIN_AMOUNT               _UxGT("Hustota mřížky")
-#define MSG_UBL_MANUAL_FILLIN               _UxGT("Ruční hustota")
-#define MSG_UBL_SMART_FILLIN                _UxGT("Chytrá hustota")
-#define MSG_UBL_FILLIN_MESH                 _UxGT("Zaplnit mřížku")
-#define MSG_UBL_INVALIDATE_ALL              _UxGT("Zrušit všechno")
-#define MSG_UBL_INVALIDATE_CLOSEST          _UxGT("Zrušit poslední")
-#define MSG_UBL_FINE_TUNE_ALL               _UxGT("Upravit všechny")
-#define MSG_UBL_FINE_TUNE_CLOSEST           _UxGT("Upravit poslední")
-#define MSG_UBL_STORAGE_MESH_MENU           _UxGT("Uložiště sítí")
-#define MSG_UBL_STORAGE_SLOT                _UxGT("Paměťový slot")
-#define MSG_UBL_LOAD_MESH                   _UxGT("Načíst síť bodů")
-#define MSG_UBL_SAVE_MESH                   _UxGT("Uložit síť bodů")
-#define MSG_UBL_SAVE_ERROR                  _UxGT("Err: Uložit UBL")
-#define MSG_UBL_RESTORE_ERROR               _UxGT("Err: Obnovit UBL")
-#define MSG_UBL_Z_OFFSET_STOPPED            _UxGT("Konec Z-Offsetu")
-#define MSG_UBL_STEP_BY_STEP_MENU           _UxGT("UBL Postupně")
+#define MSG_UBL_EDIT_CUSTOM_MESH            "Upravit vlastní síť"
+#define MSG_UBL_FINE_TUNE_MESH              "Doladit síť bodů"
+#define MSG_UBL_DONE_EDITING_MESH           "Konec úprav sítě"
+#define MSG_UBL_BUILD_CUSTOM_MESH           "Vlastní síť"
+#define MSG_UBL_BUILD_MESH_MENU             "Vytvořit síť"
+#define MSG_UBL_BUILD_PLA_MESH              "Síť bodu PLA"
+#define MSG_UBL_BUILD_ABS_MESH              "Síť bodu ABS"
+#define MSG_UBL_BUILD_COLD_MESH             "Studená síť bodu"
+#define MSG_UBL_MESH_HEIGHT_ADJUST          "Upravit výšku sítě"
+#define MSG_UBL_MESH_HEIGHT_AMOUNT          "Výška"
+#define MSG_UBL_VALIDATE_MESH_MENU          "Zkontrolovat síť"
+#define MSG_UBL_VALIDATE_PLA_MESH           "Kontrola sítě PLA"
+#define MSG_UBL_VALIDATE_ABS_MESH           "Kontrola sítě ABS"
+#define MSG_UBL_VALIDATE_CUSTOM_MESH        "Kontrola vlast. sítě"
+#define MSG_UBL_CONTINUE_MESH               "Pokračovat v síťi"
+#define MSG_UBL_MESH_LEVELING               "Síťové rovnání"
+#define MSG_UBL_3POINT_MESH_LEVELING        "3-bodove rovnání"
+#define MSG_UBL_GRID_MESH_LEVELING          "Mrizkove rovnání"
+#define MSG_UBL_MESH_LEVEL                  "Srovnat podložku"
+#define MSG_UBL_SIDE_POINTS                 "Postranní body"
+#define MSG_UBL_MAP_TYPE                    "Typ sítě bodu"
+#define MSG_UBL_OUTPUT_MAP                  "Exportovat síť"
+#define MSG_UBL_OUTPUT_MAP_HOST             "Exportovat do PC"
+#define MSG_UBL_OUTPUT_MAP_CSV              "Exportovat do CSV"
+#define MSG_UBL_OUTPUT_MAP_BACKUP           "Záloha do PC"
+#define MSG_UBL_INFO_UBL                    "Info o UBL do PC"
+#define MSG_UBL_EDIT_MESH_MENU              "Upravit síť bodů"
+#define MSG_UBL_FILLIN_AMOUNT               "Hustota mřížky"
+#define MSG_UBL_MANUAL_FILLIN               "Ruční hustota"
+#define MSG_UBL_SMART_FILLIN                "Chytrá hustota"
+#define MSG_UBL_FILLIN_MESH                 "Zaplnit mřížku"
+#define MSG_UBL_INVALIDATE_ALL              "Zrušit všechno"
+#define MSG_UBL_INVALIDATE_CLOSEST          "Zrušit poslední"
+#define MSG_UBL_FINE_TUNE_ALL               "Upravit všechny"
+#define MSG_UBL_FINE_TUNE_CLOSEST           "Upravit poslední"
+#define MSG_UBL_STORAGE_MESH_MENU           "Uložiště sítí"
+#define MSG_UBL_STORAGE_SLOT                "Paměťový slot"
+#define MSG_UBL_LOAD_MESH                   "Načíst síť bodů"
+#define MSG_UBL_SAVE_MESH                   "Uložit síť bodů"
+#define MSG_UBL_SAVE_ERROR                  "Err: Uložit UBL"
+#define MSG_UBL_RESTORE_ERROR               "Err: Obnovit UBL"
+#define MSG_UBL_Z_OFFSET_STOPPED            "Konec Z-Offsetu"
+#define MSG_UBL_STEP_BY_STEP_MENU           "UBL Postupně"
 
-#define MSG_USER_MENU                       _UxGT("Vlastní příkazy")
-#define MSG_MOVING                          _UxGT("Posouvání...")
-#define MSG_FREE_XY                         _UxGT("Uvolnit XY")
-#define MSG_MOVE_X                          _UxGT("Posunout X")
-#define MSG_MOVE_Y                          _UxGT("Posunout Y")
-#define MSG_MOVE_Z                          _UxGT("Posunout Z")
-#define MSG_MOVE_E                          _UxGT("Extrudér")
-#define MSG_MOVE_01MM                       _UxGT("Posunout o 0,1mm")
-#define MSG_MOVE_1MM                        _UxGT("Posunout o 1mm")
-#define MSG_MOVE_10MM                       _UxGT("Posunout o 10mm")
-#define MSG_SPEED                           _UxGT("Rychlost")
-#define MSG_BED_Z                           _UxGT("Výška podl.")
-#define MSG_NOZZLE                          _UxGT("Tryska")
-#define MSG_BED                             _UxGT("Podložka")
-#define MSG_FAN_SPEED                       _UxGT("Rychlost vent.")
-#define MSG_FLOW                            _UxGT("Průtok")
-#define MSG_CONTROL                         _UxGT("Ovládaní")
-#define MSG_MIN                             _UxGT(" ") LCD_STR_THERMOMETER _UxGT(" Min")
-#define MSG_MAX                             _UxGT(" ") LCD_STR_THERMOMETER _UxGT(" Max")
-#define MSG_FACTOR                          _UxGT(" ") LCD_STR_THERMOMETER _UxGT(" Fakt")
-#define MSG_AUTOTEMP                        _UxGT("Autoteplota")
-#define MSG_ON                              _UxGT("Zap")
-#define MSG_OFF                             _UxGT("Vyp")
-#define MSG_PID_P                           _UxGT("PID-P")
-#define MSG_PID_I                           _UxGT("PID-I")
-#define MSG_PID_D                           _UxGT("PID-D")
-#define MSG_PID_C                           _UxGT("PID-C")
-#define MSG_SELECT                          _UxGT("Vybrat")
-#define MSG_ACC                             _UxGT("Zrychl")
-#define MSG_JERK                            _UxGT("Jerk")
-#define MSG_VX_JERK                         _UxGT("Vx-jerk")
-#define MSG_VY_JERK                         _UxGT("Vy-jerk")
-#define MSG_VZ_JERK                         _UxGT("Vz-jerk")
-#define MSG_VE_JERK                         _UxGT("Ve-jerk")
-#define MSG_VELOCITY                        _UxGT("Rychlost")
-#define MSG_VMAX                            _UxGT("Vmax ")
-#define MSG_VMIN                            _UxGT("Vmin")
-#define MSG_VTRAV_MIN                       _UxGT("VTrav min")
-#define MSG_ACCELERATION                    _UxGT("Akcelerace")
-#define MSG_AMAX                            _UxGT("Amax ")
-#define MSG_A_RETRACT                       _UxGT("A-retrakt")
-#define MSG_A_TRAVEL                        _UxGT("A-přejezd")
-#define MSG_STEPS_PER_MM                    _UxGT("Kroků/mm")
-#define MSG_XSTEPS                          _UxGT("Xkroků/mm")
-#define MSG_YSTEPS                          _UxGT("Ykroků/mm")
-#define MSG_ZSTEPS                          _UxGT("Zkroků/mm")
-#define MSG_ESTEPS                          _UxGT("Ekroků/mm")
-#define MSG_E1STEPS                         _UxGT("E1kroků/mm")
-#define MSG_E2STEPS                         _UxGT("E2kroků/mm")
-#define MSG_E3STEPS                         _UxGT("E3kroků/mm")
-#define MSG_E4STEPS                         _UxGT("E4kroků/mm")
-#define MSG_E5STEPS                         _UxGT("E5kroků/mm")
-#define MSG_TEMPERATURE                     _UxGT("Teplota")
-#define MSG_MOTION                          _UxGT("Pohyb")
-#define MSG_FILAMENT                        _UxGT("Filament")
-#define MSG_VOLUMETRIC_ENABLED              _UxGT("E na mm3")
-#define MSG_FILAMENT_DIAM                   _UxGT("Fil. Prum.")
-#define MSG_ADVANCE_K                       _UxGT("K pro posun")
-#define MSG_CONTRAST                        _UxGT("Kontrast LCD")
-#define MSG_STORE_EEPROM                    _UxGT("Uložit nastavení")
-#define MSG_LOAD_EEPROM                     _UxGT("Načíst nastavení")
-#define MSG_RESTORE_FAILSAFE                _UxGT("Obnovit výchozí")
-#define MSG_INIT_EEPROM                     _UxGT("Inic. EEPROM")
-#define MSG_REFRESH                         _UxGT("Obnovit")
-#define MSG_WATCH                           _UxGT("Info obrazovka")
-#define MSG_PREPARE                         _UxGT("Připrava tisku")
-#define MSG_TUNE                            _UxGT("Doladění tisku")
-#define MSG_PAUSE_PRINT                     _UxGT("Pozastavit tisk")
-#define MSG_RESUME_PRINT                    _UxGT("Obnovit tisk")
-#define MSG_STOP_PRINT                      _UxGT("Zastavit tisk")
-#define MSG_CARD_MENU                       _UxGT("Tisknout z SD")
-#define MSG_NO_CARD                         _UxGT("Žádná SD karta")
-#define MSG_DWELL                           _UxGT("Uspáno...")
-#define MSG_USERWAIT                        _UxGT("Čekání na uživ...")
-#define MSG_PRINT_PAUSED                    _UxGT("Tisk pozastaven")
-#define MSG_RESUMING                        _UxGT("Obnovování tisku")
-#define MSG_PRINT_ABORTED                   _UxGT("Tisk zrušen")
-#define MSG_NO_MOVE                         _UxGT("Žádný pohyb.")
-#define MSG_KILLED                          _UxGT("PŘERUSENO. ")
-#define MSG_STOPPED                         _UxGT("ZASTAVENO. ")
-#define MSG_CONTROL_RETRACT                 _UxGT("Retrakt mm")
-#define MSG_CONTROL_RETRACT_SWAP            _UxGT("Výměna Re.mm")
-#define MSG_CONTROL_RETRACTF                _UxGT("Retraktovat  V")
-#define MSG_CONTROL_RETRACT_ZLIFT           _UxGT("Zvednuti Z mm")
-#define MSG_CONTROL_RETRACT_RECOVER         _UxGT("UnRet mm")
-#define MSG_CONTROL_RETRACT_RECOVER_SWAP    _UxGT("S UnRet mm")
-#define MSG_CONTROL_RETRACT_RECOVERF        _UxGT("UnRet  V")
-#define MSG_AUTORETRACT                     _UxGT("AutoRetr.")
-#define MSG_FILAMENTCHANGE                  _UxGT("Vyměnit filament")
-#define MSG_INIT_SDCARD                     _UxGT("Načíst SD kartu")
-#define MSG_CNG_SDCARD                      _UxGT("Vyměnit SD kartu")
-#define MSG_ZPROBE_OUT                      _UxGT("Sonda Z mimo podl")
-#define MSG_BLTOUCH                         _UxGT("BLTouch")
-#define MSG_BLTOUCH_SELFTEST                _UxGT("BLTouch Self-Test")
-#define MSG_BLTOUCH_RESET                   _UxGT("BLTouch Reset")
-#define MSG_BLTOUCH_DEPLOY                  _UxGT("BLTouch Vysunout")
-#define MSG_BLTOUCH_STOW                    _UxGT("BLTouch Zasunout")
-#define MSG_HOME                            _UxGT("Domů")  // Used as MSG_HOME " " MSG_X MSG_Y MSG_Z " " MSG_FIRST
-#define MSG_FIRST                           _UxGT("první")
-#define MSG_ZPROBE_ZOFFSET                  _UxGT("Z ofset")
-#define MSG_BABYSTEP_X                      _UxGT("Babystep X")
-#define MSG_BABYSTEP_Y                      _UxGT("Babystep Y")
-#define MSG_BABYSTEP_Z                      _UxGT("Babystep Z")
-#define MSG_ENDSTOP_ABORT                   _UxGT("Endstop abort")
-#define MSG_HEATING_FAILED_LCD              _UxGT("Chyba zahřívání")
-#define MSG_ERR_REDUNDANT_TEMP              _UxGT("REDUND. TEPLOTA")
-#define MSG_THERMAL_RUNAWAY                 _UxGT("TEPLOTNÍ SKOK")
-#define MSG_ERR_MAXTEMP                     _UxGT("VYSOKÁ TEPLOTA")
-#define MSG_ERR_MINTEMP                     _UxGT("NÍZKA TEPLOTA")
-#define MSG_ERR_MAXTEMP_BED                 _UxGT("VYS. TEPL. PODL.")
-#define MSG_ERR_MINTEMP_BED                 _UxGT("NÍZ. TEPL. PODL.")
-#define MSG_ERR_Z_HOMING                    _UxGT("G28 Z ZAKÁZÁNO")
-#define MSG_HALTED                          _UxGT("TISK. ZASTAVENA")
-#define MSG_PLEASE_RESET                    _UxGT("Proveďte reset")
-#define MSG_SHORT_DAY                       _UxGT("d")
-#define MSG_SHORT_HOUR                      _UxGT("h")
-#define MSG_SHORT_MINUTE                    _UxGT("m")
-#define MSG_HEATING                         _UxGT("Zahřívání...")
-#define MSG_HEATING_COMPLETE                _UxGT("Zahřáti hotovo.")
-#define MSG_BED_HEATING                     _UxGT("Zahřívání podl.")
-#define MSG_BED_DONE                        _UxGT("Podložka hotova.")
-#define MSG_DELTA_CALIBRATE                 _UxGT("Delta Kalibrace")
-#define MSG_DELTA_CALIBRATE_X               _UxGT("Kalibrovat X")
-#define MSG_DELTA_CALIBRATE_Y               _UxGT("Kalibrovat Y")
-#define MSG_DELTA_CALIBRATE_Z               _UxGT("Kalibrovat Z")
-#define MSG_DELTA_CALIBRATE_CENTER          _UxGT("Kalibrovat Střed")
-#define MSG_DELTA_AUTO_CALIBRATE            _UxGT("Autokalibrace")
-#define MSG_DELTA_HEIGHT_CALIBRATE          _UxGT("Nast.výšku delty")
-#define MSG_INFO_MENU                       _UxGT("O tiskárně")
-#define MSG_INFO_PRINTER_MENU               _UxGT("Info o tiskárně")
-#define MSG_3POINT_LEVELING                 _UxGT("3-bodové rovnání")
-#define MSG_LINEAR_LEVELING                 _UxGT("Lineárni rovnání")
-#define MSG_BILINEAR_LEVELING               _UxGT("Bilineární rovnání")
-#define MSG_UBL_LEVELING                    _UxGT("Unified Bed Leveling")
-#define MSG_MESH_LEVELING                   _UxGT("Mřížkové rovnání")
-#define MSG_INFO_STATS_MENU                 _UxGT("Statistika")
-#define MSG_INFO_BOARD_MENU                 _UxGT("Info o desce")
-#define MSG_INFO_THERMISTOR_MENU            _UxGT("Termistory")
-#define MSG_INFO_EXTRUDERS                  _UxGT("Extrudéry")
-#define MSG_INFO_BAUDRATE                   _UxGT("Rychlost")
-#define MSG_INFO_PROTOCOL                   _UxGT("Protokol")
-#define MSG_CASE_LIGHT                      _UxGT("Osvětlení")
-#define MSG_CASE_LIGHT_BRIGHTNESS           _UxGT("Jas světla")
+#define MSG_USER_MENU                       "Vlastní příkazy"
+#define MSG_MOVING                          "Posouvání..."
+#define MSG_FREE_XY                         "Uvolnit XY"
+#define MSG_MOVE_X                          "Posunout X"
+#define MSG_MOVE_Y                          "Posunout Y"
+#define MSG_MOVE_Z                          "Posunout Z"
+#define MSG_MOVE_E                          "Extrudér"
+#define MSG_MOVE_01MM                       "Posunout o 0,1mm"
+#define MSG_MOVE_1MM                        "Posunout o 1mm"
+#define MSG_MOVE_10MM                       "Posunout o 10mm"
+#define MSG_SPEED                           "Rychlost"
+#define MSG_BED_Z                           "Výška podl."
+#define MSG_NOZZLE                          "Tryska"
+#define MSG_BED                             "Podložka"
+#define MSG_FAN_SPEED                       "Rychlost vent."
+#define MSG_FLOW                            "Průtok"
+#define MSG_CONTROL                         "Ovládaní"
+#define MSG_MIN                             " " LCD_STR_THERMOMETER " Min"
+#define MSG_MAX                             " " LCD_STR_THERMOMETER " Max"
+#define MSG_FACTOR                          " " LCD_STR_THERMOMETER " Fakt"
+#define MSG_AUTOTEMP                        "Autoteplota"
+#define MSG_ON                              "Zap"
+#define MSG_OFF                             "Vyp"
+#define MSG_PID_P                           "PID-P"
+#define MSG_PID_I                           "PID-I"
+#define MSG_PID_D                           "PID-D"
+#define MSG_PID_C                           "PID-C"
+#define MSG_SELECT                          "Vybrat"
+#define MSG_ACC                             "Zrychl"
+#define MSG_JERK                            "Jerk"
+#define MSG_VX_JERK                         "Vx-jerk"
+#define MSG_VY_JERK                         "Vy-jerk"
+#define MSG_VZ_JERK                         "Vz-jerk"
+#define MSG_VE_JERK                         "Ve-jerk"
+#define MSG_VELOCITY                        "Rychlost"
+#define MSG_VMAX                            "Vmax "
+#define MSG_VMIN                            "Vmin"
+#define MSG_VTRAV_MIN                       "VTrav min"
+#define MSG_ACCELERATION                    "Akcelerace"
+#define MSG_AMAX                            "Amax "
+#define MSG_A_RETRACT                       "A-retrakt"
+#define MSG_A_TRAVEL                        "A-přejezd"
+#define MSG_STEPS_PER_MM                    "Kroků/mm"
+#define MSG_XSTEPS                          "Xkroků/mm"
+#define MSG_YSTEPS                          "Ykroků/mm"
+#define MSG_ZSTEPS                          "Zkroků/mm"
+#define MSG_ESTEPS                          "Ekroků/mm"
+#define MSG_E1STEPS                         "E1kroků/mm"
+#define MSG_E2STEPS                         "E2kroků/mm"
+#define MSG_E3STEPS                         "E3kroků/mm"
+#define MSG_E4STEPS                         "E4kroků/mm"
+#define MSG_E5STEPS                         "E5kroků/mm"
+#define MSG_TEMPERATURE                     "Teplota"
+#define MSG_MOTION                          "Pohyb"
+#define MSG_FILAMENT                        "Filament"
+#define MSG_VOLUMETRIC_ENABLED              "E na mm3"
+#define MSG_FILAMENT_DIAM                   "Fil. Prum."
+#define MSG_ADVANCE_K                       "K pro posun"
+#define MSG_CONTRAST                        "Kontrast LCD"
+#define MSG_STORE_EEPROM                    "Uložit nastavení"
+#define MSG_LOAD_EEPROM                     "Načíst nastavení"
+#define MSG_RESTORE_FAILSAFE                "Obnovit výchozí"
+#define MSG_INIT_EEPROM                     "Inic. EEPROM"
+#define MSG_REFRESH                         "Obnovit"
+#define MSG_WATCH                           "Info obrazovka"
+#define MSG_PREPARE                         "Připrava tisku"
+#define MSG_TUNE                            "Doladění tisku"
+#define MSG_PAUSE_PRINT                     "Pozastavit tisk"
+#define MSG_RESUME_PRINT                    "Obnovit tisk"
+#define MSG_STOP_PRINT                      "Zastavit tisk"
+#define MSG_CARD_MENU                       "Tisknout z SD"
+#define MSG_NO_CARD                         "Žádná SD karta"
+#define MSG_DWELL                           "Uspáno..."
+#define MSG_USERWAIT                        "Čekání na uživ..."
+#define MSG_PRINT_PAUSED                    "Tisk pozastaven"
+#define MSG_RESUMING                        "Obnovování tisku"
+#define MSG_PRINT_ABORTED                   "Tisk zrušen"
+#define MSG_NO_MOVE                         "Žádný pohyb."
+#define MSG_KILLED                          "PŘERUSENO. "
+#define MSG_STOPPED                         "ZASTAVENO. "
+#define MSG_CONTROL_RETRACT                 "Retrakt mm"
+#define MSG_CONTROL_RETRACT_SWAP            "Výměna Re.mm"
+#define MSG_CONTROL_RETRACTF                "Retraktovat  V"
+#define MSG_CONTROL_RETRACT_ZLIFT           "Zvednuti Z mm"
+#define MSG_CONTROL_RETRACT_RECOVER         "UnRet mm"
+#define MSG_CONTROL_RETRACT_RECOVER_SWAP    "S UnRet mm"
+#define MSG_CONTROL_RETRACT_RECOVERF        "UnRet  V"
+#define MSG_AUTORETRACT                     "AutoRetr."
+#define MSG_FILAMENTCHANGE                  "Vyměnit filament"
+#define MSG_INIT_SDCARD                     "Načíst SD kartu"
+#define MSG_CNG_SDCARD                      "Vyměnit SD kartu"
+#define MSG_ZPROBE_OUT                      "Sonda Z mimo podl"
+#define MSG_BLTOUCH                         "BLTouch"
+#define MSG_BLTOUCH_SELFTEST                "BLTouch Self-Test"
+#define MSG_BLTOUCH_RESET                   "BLTouch Reset"
+#define MSG_BLTOUCH_DEPLOY                  "BLTouch Vysunout"
+#define MSG_BLTOUCH_STOW                    "BLTouch Zasunout"
+#define MSG_HOME                            "Domů"  // Used as MSG_HOME " " MSG_X MSG_Y MSG_Z " " MSG_FIRST
+#define MSG_FIRST                           "první"
+#define MSG_ZPROBE_ZOFFSET                  "Z ofset"
+#define MSG_BABYSTEP_X                      "Babystep X"
+#define MSG_BABYSTEP_Y                      "Babystep Y"
+#define MSG_BABYSTEP_Z                      "Babystep Z"
+#define MSG_ENDSTOP_ABORT                   "Endstop abort"
+#define MSG_HEATING_FAILED_LCD              "Chyba zahřívání"
+#define MSG_ERR_REDUNDANT_TEMP              "REDUND. TEPLOTA"
+#define MSG_THERMAL_RUNAWAY                 "TEPLOTNÍ SKOK"
+#define MSG_ERR_MAXTEMP                     "VYSOKÁ TEPLOTA"
+#define MSG_ERR_MINTEMP                     "NÍZKA TEPLOTA"
+#define MSG_ERR_MAXTEMP_BED                 "VYS. TEPL. PODL."
+#define MSG_ERR_MINTEMP_BED                 "NÍZ. TEPL. PODL."
+#define MSG_ERR_Z_HOMING                    "G28 Z ZAKÁZÁNO"
+#define MSG_HALTED                          "TISK. ZASTAVENA"
+#define MSG_PLEASE_RESET                    "Proveďte reset"
+#define MSG_SHORT_DAY                       "d"
+#define MSG_SHORT_HOUR                      "h"
+#define MSG_SHORT_MINUTE                    "m"
+#define MSG_HEATING                         "Zahřívání..."
+#define MSG_HEATING_COMPLETE                "Zahřáti hotovo."
+#define MSG_BED_HEATING                     "Zahřívání podl."
+#define MSG_BED_DONE                        "Podložka hotova."
+#define MSG_DELTA_CALIBRATE                 "Delta Kalibrace"
+#define MSG_DELTA_CALIBRATE_X               "Kalibrovat X"
+#define MSG_DELTA_CALIBRATE_Y               "Kalibrovat Y"
+#define MSG_DELTA_CALIBRATE_Z               "Kalibrovat Z"
+#define MSG_DELTA_CALIBRATE_CENTER          "Kalibrovat Střed"
+#define MSG_DELTA_AUTO_CALIBRATE            "Autokalibrace"
+#define MSG_DELTA_HEIGHT_CALIBRATE          "Nast.výšku delty"
+#define MSG_INFO_MENU                       "O tiskárně"
+#define MSG_INFO_PRINTER_MENU               "Info o tiskárně"
+#define MSG_3POINT_LEVELING                 "3-bodové rovnání"
+#define MSG_LINEAR_LEVELING                 "Lineárni rovnání"
+#define MSG_BILINEAR_LEVELING               "Bilineární rovnání"
+#define MSG_UBL_LEVELING                    "Unified Bed Leveling"
+#define MSG_MESH_LEVELING                   "Mřížkové rovnání"
+#define MSG_INFO_STATS_MENU                 "Statistika"
+#define MSG_INFO_BOARD_MENU                 "Info o desce"
+#define MSG_INFO_THERMISTOR_MENU            "Termistory"
+#define MSG_INFO_EXTRUDERS                  "Extrudéry"
+#define MSG_INFO_BAUDRATE                   "Rychlost"
+#define MSG_INFO_PROTOCOL                   "Protokol"
+#define MSG_CASE_LIGHT                      "Osvětlení"
+#define MSG_CASE_LIGHT_BRIGHTNESS           "Jas světla"
 
 #if LCD_WIDTH >= 20
-  #define MSG_INFO_PRINT_COUNT              _UxGT("Počet tisků")
-  #define MSG_INFO_COMPLETED_PRINTS         _UxGT("Dokončeno")
-  #define MSG_INFO_PRINT_TIME               _UxGT("Celkový čas")
-  #define MSG_INFO_PRINT_LONGEST            _UxGT("Nejdelší tisk")
-  #define MSG_INFO_PRINT_FILAMENT           _UxGT("Celkem vytlačeno")
+  #define MSG_INFO_PRINT_COUNT              "Počet tisků"
+  #define MSG_INFO_COMPLETED_PRINTS         "Dokončeno"
+  #define MSG_INFO_PRINT_TIME               "Celkový čas"
+  #define MSG_INFO_PRINT_LONGEST            "Nejdelší tisk"
+  #define MSG_INFO_PRINT_FILAMENT           "Celkem vytlačeno"
 #else
-  #define MSG_INFO_PRINT_COUNT              _UxGT("Tisky")
-  #define MSG_INFO_COMPLETED_PRINTS         _UxGT("Hotovo")
-  #define MSG_INFO_PRINT_TIME               _UxGT("Čas")
-  #define MSG_INFO_PRINT_LONGEST            _UxGT("Nejdelší")
-  #define MSG_INFO_PRINT_FILAMENT           _UxGT("Vytlačeno")
+  #define MSG_INFO_PRINT_COUNT              "Tisky"
+  #define MSG_INFO_COMPLETED_PRINTS         "Hotovo"
+  #define MSG_INFO_PRINT_TIME               "Čas"
+  #define MSG_INFO_PRINT_LONGEST            "Nejdelší"
+  #define MSG_INFO_PRINT_FILAMENT           "Vytlačeno"
 #endif
 
-#define MSG_INFO_MIN_TEMP                   _UxGT("Teplota min")
-#define MSG_INFO_MAX_TEMP                   _UxGT("Teplota max")
-#define MSG_INFO_PSU                        _UxGT("Nap. zdroj")
-#define MSG_DRIVE_STRENGTH                  _UxGT("Buzení motorů")
-#define MSG_DAC_PERCENT                     _UxGT("Motor %")
-#define MSG_DAC_EEPROM_WRITE                _UxGT("Uložit do EEPROM")
+#define MSG_INFO_MIN_TEMP                   "Teplota min"
+#define MSG_INFO_MAX_TEMP                   "Teplota max"
+#define MSG_INFO_PSU                        "Nap. zdroj"
+#define MSG_DRIVE_STRENGTH                  "Buzení motorů"
+#define MSG_DAC_PERCENT                     "Motor %"
+#define MSG_DAC_EEPROM_WRITE                "Uložit do EEPROM"
 
-#define MSG_FILAMENT_CHANGE_HEADER          _UxGT("PRINT PAUSED")
-#define MSG_FILAMENT_CHANGE_OPTION_HEADER   _UxGT("RESUME OPTIONS:")
-#define MSG_FILAMENT_CHANGE_OPTION_EXTRUDE  _UxGT("Ještě vytlačit")
-#define MSG_FILAMENT_CHANGE_OPTION_RESUME   _UxGT("Obnovit tisk")
-#define MSG_FILAMENT_CHANGE_MINTEMP         _UxGT("Min. teplota je ")
-#define MSG_FILAMENT_CHANGE_NOZZLE          _UxGT("  Tryska: ")
+#define MSG_FILAMENT_CHANGE_HEADER          "PRINT PAUSED"
+#define MSG_FILAMENT_CHANGE_OPTION_HEADER   "RESUME OPTIONS:"
+#define MSG_FILAMENT_CHANGE_OPTION_EXTRUDE  "Ještě vytlačit"
+#define MSG_FILAMENT_CHANGE_OPTION_RESUME   "Obnovit tisk"
+#define MSG_FILAMENT_CHANGE_MINTEMP         "Min. teplota je "
+#define MSG_FILAMENT_CHANGE_NOZZLE          "  Tryska: "
 
 #if LCD_HEIGHT >= 4
   // Up to 3 lines allowed
-  #define MSG_FILAMENT_CHANGE_INIT_1          _UxGT("Čekejte prosím")
-  #define MSG_FILAMENT_CHANGE_INIT_2          _UxGT("na zahájení")
-  #define MSG_FILAMENT_CHANGE_INIT_3          _UxGT("výměny filamentu")
-  #define MSG_FILAMENT_CHANGE_UNLOAD_1        _UxGT("Čekejte prosím")
-  #define MSG_FILAMENT_CHANGE_UNLOAD_2        _UxGT("na vysunuti")
-  #define MSG_FILAMENT_CHANGE_UNLOAD_3        _UxGT("filamentu")
-  #define MSG_FILAMENT_CHANGE_INSERT_1        _UxGT("Vložte filament")
-  #define MSG_FILAMENT_CHANGE_INSERT_2        _UxGT("a stiskněte")
-  #define MSG_FILAMENT_CHANGE_INSERT_3        _UxGT("tlačítko...")
-  #define MSG_FILAMENT_CHANGE_HEAT_1          _UxGT("Klikněte pro")
-  #define MSG_FILAMENT_CHANGE_HEAT_2          _UxGT("nahřátí trysky")
-  #define MSG_FILAMENT_CHANGE_HEATING_1       _UxGT("Čekejte prosím")
-  #define MSG_FILAMENT_CHANGE_HEATING_2       _UxGT("na nahřátí tr.")
-  #define MSG_FILAMENT_CHANGE_LOAD_1          _UxGT("Čekejte prosím")
-  #define MSG_FILAMENT_CHANGE_LOAD_2          _UxGT("na zavedení")
-  #define MSG_FILAMENT_CHANGE_LOAD_3          _UxGT("filamentu")
-  #define MSG_FILAMENT_CHANGE_EXTRUDE_1       _UxGT("Čekejte prosím")
-  #define MSG_FILAMENT_CHANGE_EXTRUDE_2       _UxGT("na vytlačení")
-  #define MSG_FILAMENT_CHANGE_EXTRUDE_3       _UxGT("filamentu")
-  #define MSG_FILAMENT_CHANGE_RESUME_1        _UxGT("Čekejte prosím")
-  #define MSG_FILAMENT_CHANGE_RESUME_2        _UxGT("na pokračování")
-  #define MSG_FILAMENT_CHANGE_RESUME_3        _UxGT("tisku")
+  #define MSG_FILAMENT_CHANGE_INIT_1          "Čekejte prosím"
+  #define MSG_FILAMENT_CHANGE_INIT_2          "na zahájení"
+  #define MSG_FILAMENT_CHANGE_INIT_3          "výměny filamentu"
+  #define MSG_FILAMENT_CHANGE_UNLOAD_1        "Čekejte prosím"
+  #define MSG_FILAMENT_CHANGE_UNLOAD_2        "na vysunuti"
+  #define MSG_FILAMENT_CHANGE_UNLOAD_3        "filamentu"
+  #define MSG_FILAMENT_CHANGE_INSERT_1        "Vložte filament"
+  #define MSG_FILAMENT_CHANGE_INSERT_2        "a stiskněte"
+  #define MSG_FILAMENT_CHANGE_INSERT_3        "tlačítko..."
+  #define MSG_FILAMENT_CHANGE_HEAT_1          "Klikněte pro"
+  #define MSG_FILAMENT_CHANGE_HEAT_2          "nahřátí trysky"
+  #define MSG_FILAMENT_CHANGE_HEATING_1       "Čekejte prosím"
+  #define MSG_FILAMENT_CHANGE_HEATING_2       "na nahřátí tr."
+  #define MSG_FILAMENT_CHANGE_LOAD_1          "Čekejte prosím"
+  #define MSG_FILAMENT_CHANGE_LOAD_2          "na zavedení"
+  #define MSG_FILAMENT_CHANGE_LOAD_3          "filamentu"
+  #define MSG_FILAMENT_CHANGE_EXTRUDE_1       "Čekejte prosím"
+  #define MSG_FILAMENT_CHANGE_EXTRUDE_2       "na vytlačení"
+  #define MSG_FILAMENT_CHANGE_EXTRUDE_3       "filamentu"
+  #define MSG_FILAMENT_CHANGE_RESUME_1        "Čekejte prosím"
+  #define MSG_FILAMENT_CHANGE_RESUME_2        "na pokračování"
+  #define MSG_FILAMENT_CHANGE_RESUME_3        "tisku"
 #else // LCD_HEIGHT < 4
   // Up to 2 lines allowed
-  #define MSG_FILAMENT_CHANGE_INIT_1          _UxGT("Čekejte...")
-  #define MSG_FILAMENT_CHANGE_UNLOAD_1        _UxGT("Vysouvání...")
-  #define MSG_FILAMENT_CHANGE_INSERT_1        _UxGT("Vložte, klikněte")
-  #define MSG_FILAMENT_CHANGE_HEATING_1       _UxGT("Nahřívání...")
-  #define MSG_FILAMENT_CHANGE_LOAD_1          _UxGT("Zavádění...")
-  #define MSG_FILAMENT_CHANGE_EXTRUDE_1       _UxGT("Vytlačování...")
-  #define MSG_FILAMENT_CHANGE_RESUME_1        _UxGT("Pokračování...")
+  #define MSG_FILAMENT_CHANGE_INIT_1          "Čekejte..."
+  #define MSG_FILAMENT_CHANGE_UNLOAD_1        "Vysouvání..."
+  #define MSG_FILAMENT_CHANGE_INSERT_1        "Vložte, klikněte"
+  #define MSG_FILAMENT_CHANGE_HEATING_1       "Nahřívání..."
+  #define MSG_FILAMENT_CHANGE_LOAD_1          "Zavádění..."
+  #define MSG_FILAMENT_CHANGE_EXTRUDE_1       "Vytlačování..."
+  #define MSG_FILAMENT_CHANGE_RESUME_1        "Pokračování..."
 #endif // LCD_HEIGHT < 4
 
 #endif // LANGUAGE_CZ_UTF_H

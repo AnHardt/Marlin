@@ -25,15 +25,8 @@
 
 #include "../inc/MarlinConfig.h"
 
-#define _UxGT(a) a
-
 // Define SIMULATE_ROMFONT to see what is seen on the character based display defined in Configuration.h
 //#define SIMULATE_ROMFONT
-
-// Fallback if no language is set. DON'T CHANGE
-#ifndef LCD_LANGUAGE
-  #define LCD_LANGUAGE en
-#endif
 
 // For character-based LCD controllers (DISPLAY_CHARSET_HD44780)
 #define JAPANESE 1
@@ -262,10 +255,6 @@
 
 // LCD Menu Messages
 
-#define LANGUAGE_INCL_(M) STRINGIFY_(../lcd/language/language_##M.h)
-#define LANGUAGE_INCL(M) LANGUAGE_INCL_(M)
-#define INCLUDE_LANGUAGE LANGUAGE_INCL(LCD_LANGUAGE)
-
 // Never translate these strings
 #define MSG_X "X"
 #define MSG_Y "Y"
@@ -297,6 +286,10 @@
 #define MSG_DIAM_E4 " 4"
 #define MSG_DIAM_E5 " 5"
 
+#define LANGUAGE_INCL_(M) STRINGIFY_(../lcd/language/language_##M.h)
+#define LANGUAGE_INCL(M) LANGUAGE_INCL_(M)
+#define INCLUDE_LANGUAGE LANGUAGE_INCL(LCD_LANGUAGE)
+
 #include INCLUDE_LANGUAGE
 
 #if DISABLED(SIMULATE_ROMFONT) \
@@ -312,6 +305,7 @@
   #define DISPLAY_CHARSET_ISO10646_1 // use the better font on full graphic displays.
 #endif
 
+#define LANGUAGE_FALBACK
 #include "../lcd/language/language_en.h"
 
 #endif // __LANGUAGE_H
