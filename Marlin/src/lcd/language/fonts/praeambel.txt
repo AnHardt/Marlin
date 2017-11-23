@@ -1,0 +1,64 @@
+/**
+ * Marlin 3D Printer Firmware
+ * Copyright (C) 2017 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ *
+ * Based on Sprinter and grbl.
+ * Copyright (C) 2011 Camiel Gubbels / Erik van der Zalm
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/*
+ * This is a generated file! Please don't edit.
+ * To produce this file please use either:
+ * > MakeFont.sh Font.bdf language_file
+ * to produce a single font information file, or
+ * > MakeAllFonts.sh Font.bdf
+ * to produce all languages font information files
+ */
+
+ /*
+  * U8Glib information
+  *
+  * font information
+  * The first line in the u8g_fntpgm_uint8_t typed blocks is
+  *  offset
+  *  0  font format
+  *  1  FONTBOUNDINGBOX width     unsigned
+  *  2  FONTBOUNDINGBOX height    unsigned
+  *  3  FONTBOUNDINGBOX x-offset  signed
+  *  4  FONTBOUNDINGBOX y-offset  signed
+  *  5  capital A height          unsigned
+  *  6  start 'A'                 
+  *  8  start 'a'                 
+  * 10  encoding start            
+  * 11  encoding end              
+  * 12  descent 'g'               negative: below baseline
+  * 13  font max ascent           
+  * 14  font min decent           negative: below baseline
+  * 15  font xascent              
+  * 16  font xdecent              negative: below baseline
+  *
+  *
+  * format 0 // what we use excusively
+  *  glyph information
+  *  offset
+  *  0  BBX width    unsigned
+  *  1  BBX height   unsigned
+  *  2  data size    unsigned (BBX width + 7)/8 * BBX height
+  *  3  DWIDTH       signed
+  *  4  BBX xoffset  signed
+  *  5  BBX yoffset  signed
+*/
