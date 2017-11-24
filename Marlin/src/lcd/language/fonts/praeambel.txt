@@ -40,19 +40,19 @@
   *  2  FONTBOUNDINGBOX height    unsigned
   *  3  FONTBOUNDINGBOX x-offset  signed
   *  4  FONTBOUNDINGBOX y-offset  signed
-  *  5  capital A height          unsigned
-  *  6  start 'A'                 
-  *  8  start 'a'                 
+  *  5  capital A height          unsigned                  // don't trust in this. Only valid for ASCII font in the first half.
+  *  6  start 'A'                                           // don't trust in this. Only valid for ASCII font in the first half.
+  *  8  start 'a'                                           // don't trust in this. Only valid for ASCII font in the first half.
   * 10  encoding start            
   * 11  encoding end              
-  * 12  descent 'g'               negative: below baseline
+  * 12  descent 'g'               negative: below baseline  // don't trust in this. Only valid for ASCII font in the first half.
   * 13  font max ascent           
   * 14  font min decent           negative: below baseline
   * 15  font xascent              
   * 16  font xdecent              negative: below baseline
   *
   *
-  * format 0 // what we use excusively
+  * format 0 // what we use exclusively.
   *  glyph information
   *  offset
   *  0  BBX width    unsigned
