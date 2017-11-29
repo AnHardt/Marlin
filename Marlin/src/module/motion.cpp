@@ -632,9 +632,17 @@ void clean_up_after_endstop_or_probe_move() { bracket_probe_move(false); }
 
     // Get the linear distance in XYZ
     float cartesian_mm = SQRT(sq(xdiff) + sq(ydiff) + sq(zdiff));
+    #if ENABLED(DELTA)
+      // for a DELTA steps_per_mm[] are the same for X,Y,Z
+      uint16_t maxsegments =  cartesian_mm * steps_per_mm[X_AXIS] / MIN_STEPS_PER_SEGMENT;
+    #endif
 
     // If the move is very short, check the E move distance
-    if (UNEAR_ZERO(cartesian_mm)) cartesian_mm = ABS(ediff);
+   if (UNEAR_ZERO(cartesian_mm)) cartesian_mm = ABS(ediff);
+      #if ENABLED(DELTA)
+        maxsegments =  cartesian_mm * steps_per_mm[E_AXIS] / MIN_STEPS_PER_SEGMENT;
+      #endif
+    }
 
     // No E move either? Game over.
     if (UNEAR_ZERO(cartesian_mm)) return true;
@@ -645,6 +653,9 @@ void clean_up_after_endstop_or_probe_move() { bracket_probe_move(false); }
     // The number of segments-per-second times the duration
     // gives the number of segments
     uint16_t segments = delta_segments_per_second * seconds;
+    #if ENABLED(DELTA)
+      NOMORE(segments, maxsegments);
+    #endif
 
     // For SCARA enforce a minimum segment size
     #if IS_SCARA
