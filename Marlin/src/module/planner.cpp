@@ -225,6 +225,7 @@ void Planner::calculate_trapezoid_for_block(block_t* const block, const float &e
           plateau_steps = block->step_event_count - accelerate_steps - decelerate_steps;
 
   SERIAL_ECHO("^"); 
+  SERIAL_ECHO(((int32_t)block-(int32_t)&block_buffer)/sizeof(block_t)); 
   // Does accelerate_steps + decelerate_steps exceed step_event_count?
   // Then we can't possibly reach the nominal rate, there will be no cruising.
   // Use intersection_distance() to calculate accel / braking time in order to
@@ -262,6 +263,9 @@ void Planner::calculate_trapezoid_for_block(block_t* const block, const float &e
 void Planner::reverse_pass_kernel(block_t* const current, const block_t *next) {
   if (!current || !next) return;
   SERIAL_ECHO("<"); 
+  SERIAL_ECHO(((int32_t)current-(int32_t)&block_buffer)/sizeof(block_t)); 
+  SERIAL_ECHO("-"); 
+  SERIAL_ECHO(((int32_t)next-(int32_t)&block_buffer)/sizeof(block_t)); 
   // If entry speed is already at the maximum entry speed, no need to recheck. Block is cruising.
   // If not, block in state of acceleration or deceleration. Reset entry speed to maximum and
   // check for maximum allowable speed reductions to ensure maximum possible planned speed.
@@ -282,24 +286,24 @@ void Planner::reverse_pass_kernel(block_t* const current, const block_t *next) {
  */
 void Planner::reverse_pass() {
 
-  if (movesplanned() > 3) {
+  if (movesplanned() > 2) {
 
-    block_t* block[3] = { NULL, NULL, NULL };
+    block_t* block[2] = { NULL, NULL };
 
     // Make a local copy of block_buffer_tail, because the interrupt can alter it
     // Is a critical section REALLY needed for a single byte change?
     //CRITICAL_SECTION_START;
     uint8_t tail = block_buffer_tail;
     //CRITICAL_SECTION_END
+    tail = BLOCK_MOD(tail+2);
 
-    uint8_t b = BLOCK_MOD(block_buffer_head - 3);
+    uint8_t b = BLOCK_MOD(block_buffer_head);
     while (b != tail) {
       if (block[0] && TEST(block[0]->flag, BLOCK_BIT_START_FROM_FULL_HALT)) break;
       b = prev_block_index(b);
-      block[2] = block[1];
       block[1] = block[0];
       block[0] = &block_buffer[b];
-      reverse_pass_kernel(block[1], block[2]);
+      reverse_pass_kernel(block[0], block[1]); // current, next
     }
   }
 }
@@ -309,6 +313,9 @@ void Planner::forward_pass_kernel(const block_t* previous, block_t* const curren
   if (!previous) return;
 
   SERIAL_ECHO(">"); 
+  SERIAL_ECHO(((int32_t)previous-(int32_t)&block_buffer)/sizeof(block_t)); 
+  SERIAL_ECHO("-"); 
+  SERIAL_ECHO(((int32_t)current-(int32_t)&block_buffer)/sizeof(block_t)); 
   // If the previous block is an acceleration block, but it is not long enough to complete the
   // full speed change within the block, we need to adjust the entry speed accordingly. Entry
   // speeds have already been reset, maximized, and reverse planned by reverse planner.
@@ -398,8 +405,11 @@ void Planner::recalculate_trapezoids() {
  *   3. Recalculate "trapezoids" for all blocks.
  */
 void Planner::recalculate() {
+  SERIAL_ECHO("\nR\n"); for (uint8_t b = block_buffer_tail; b != block_buffer_head; b = next_block_index(b)) debug_plan(b); 
   reverse_pass();
+  SERIAL_ECHO("\nF\n"); for (uint8_t b = block_buffer_tail; b != block_buffer_head; b = next_block_index(b)) debug_plan(b); 
   forward_pass();
+  SERIAL_ECHO("\nT\n"); for (uint8_t b = block_buffer_tail; b != block_buffer_head; b = next_block_index(b)) debug_plan(b); 
   recalculate_trapezoids();
 }
 
@@ -1392,12 +1402,24 @@ void Planner::debug_plan(uint8_t blocknr) {
   if (TEST((&block_buffer[blocknr])->flag, BLOCK_BIT_RECALCULATE)) 
     SERIAL_ECHO("*"); 
   else 
-    SERIAL_ECHO(" "); 
+    SERIAL_ECHO(" ");
+  SERIAL_ECHO("T");
   SERIAL_ECHO((&block_buffer[blocknr])->initial_rate); 
   SERIAL_ECHO(","); 
   SERIAL_ECHO((&block_buffer[blocknr])->nominal_rate); 
   SERIAL_ECHO(","); 
   SERIAL_ECHO((&block_buffer[blocknr])->final_rate); 
+  //SERIAL_ECHO(","); 
+  //SERIAL_ECHO((&block_buffer[blocknr])->acceleration_steps_per_s2); 
+  SERIAL_ECHO(";S"); 
+  SERIAL_ECHO((&block_buffer[blocknr])->step_event_count); 
+  SERIAL_ECHO(","); 
+  SERIAL_ECHO((&block_buffer[blocknr])->accelerate_until); 
+  SERIAL_ECHO(","); 
+  SERIAL_ECHO((&block_buffer[blocknr])->decelerate_after); 
+  //SERIAL_ECHO(","); 
+  //SERIAL_ECHO((&block_buffer[blocknr])->acceleration_rate); 
+
   SERIAL_ECHO("\n"); 
 } 
 
