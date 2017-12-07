@@ -224,6 +224,7 @@ void Planner::calculate_trapezoid_for_block(block_t* const block, const float &e
           // Steps between acceleration and deceleration, if any
           plateau_steps = block->step_event_count - accelerate_steps - decelerate_steps;
 
+  SERIAL_ECHO("^"); 
   // Does accelerate_steps + decelerate_steps exceed step_event_count?
   // Then we can't possibly reach the nominal rate, there will be no cruising.
   // Use intersection_distance() to calculate accel / braking time in order to
@@ -260,6 +261,7 @@ void Planner::calculate_trapezoid_for_block(block_t* const block, const float &e
 // The kernel called by recalculate() when scanning the plan from last to first entry.
 void Planner::reverse_pass_kernel(block_t* const current, const block_t *next) {
   if (!current || !next) return;
+  SERIAL_ECHO("<"); 
   // If entry speed is already at the maximum entry speed, no need to recheck. Block is cruising.
   // If not, block in state of acceleration or deceleration. Reset entry speed to maximum and
   // check for maximum allowable speed reductions to ensure maximum possible planned speed.
@@ -306,6 +308,7 @@ void Planner::reverse_pass() {
 void Planner::forward_pass_kernel(const block_t* previous, block_t* const current) {
   if (!previous) return;
 
+  SERIAL_ECHO(">"); 
   // If the previous block is an acceleration block, but it is not long enough to complete the
   // full speed change within the block, we need to adjust the entry speed accordingly. Entry
   // speeds have already been reset, maximized, and reverse planned by reverse planner.
@@ -1368,6 +1371,36 @@ void Planner::_buffer_steps(const int32_t (&target)[XYZE], float fr_mm_s, const 
 
 } // _buffer_steps()
 
+void Planner::debug_plan(uint8_t blocknr) { 
+  SERIAL_ECHO_START(); 
+  SERIAL_ECHO((int)blocknr); 
+  SERIAL_ECHO(":"); 
+  SERIAL_ECHO((int)movesplanned()); 
+  SERIAL_ECHO(";"); 
+  if (TEST((&block_buffer[blocknr])->flag, BLOCK_BIT_BUSY)) 
+    SERIAL_ECHO("X"); 
+  else 
+    SERIAL_ECHO(" "); 
+  if (TEST((&block_buffer[blocknr])->flag, BLOCK_BIT_START_FROM_FULL_HALT)) 
+    SERIAL_ECHO("/"); 
+  else 
+    SERIAL_ECHO(" "); 
+  if (TEST((&block_buffer[blocknr])->flag, BLOCK_BIT_NOMINAL_LENGTH)) 
+    SERIAL_ECHO("-"); 
+  else 
+    SERIAL_ECHO(" "); 
+  if (TEST((&block_buffer[blocknr])->flag, BLOCK_BIT_RECALCULATE)) 
+    SERIAL_ECHO("*"); 
+  else 
+    SERIAL_ECHO(" "); 
+  SERIAL_ECHO((&block_buffer[blocknr])->initial_rate); 
+  SERIAL_ECHO(","); 
+  SERIAL_ECHO((&block_buffer[blocknr])->nominal_rate); 
+  SERIAL_ECHO(","); 
+  SERIAL_ECHO((&block_buffer[blocknr])->final_rate); 
+  SERIAL_ECHO("\n"); 
+} 
+
 /**
  * Planner::_buffer_line
  *
@@ -1436,12 +1469,16 @@ void Planner::_buffer_line(const float &a, const float &b, const float &c, const
     DISABLE_STEPPER_DRIVER_INTERRUPT();
     _buffer_steps(between, fr_mm_s, extruder);
     const uint8_t next = block_buffer_head;
+    SERIAL_ECHO(","); 
     _buffer_steps(target, fr_mm_s, extruder);
     SBI(block_buffer[next].flag, BLOCK_BIT_CONTINUED);
+    SERIAL_ECHO("\n"); for (uint8_t b = block_buffer_tail; b != block_buffer_head; b = next_block_index(b)) debug_plan(b); 
     ENABLE_STEPPER_DRIVER_INTERRUPT();
   }
-  else
+  else {
     _buffer_steps(target, fr_mm_s, extruder);
+    SERIAL_ECHO("\n"); for (uint8_t b = block_buffer_tail; b != block_buffer_head; b = next_block_index(b)) debug_plan(b); 
+  }
 
   stepper.wake_up();
 
