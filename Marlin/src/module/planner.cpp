@@ -285,26 +285,20 @@ void Planner::reverse_pass_kernel(block_t* const current, const block_t *next) {
  * Once in reverse and once forward. This implements the reverse pass.
  */
 void Planner::reverse_pass() {
+  if (movesplanned() > 3) {
+    uint8_t endnr = BLOCK_MOD(block_buffer_tail + 2); //tail is running. tail+1 should not be altered because it's connected to the running block.
+                                                      // tail+2 because the index is not already advanced when checked
+    uint8_t blocknr = prev_block_index(block_buffer_head);
+    block_t* current = &block_buffer[blocknr];
 
-  if (movesplanned() > 2) {
-
-    block_t* block[2] = { NULL, NULL };
-
-    // Make a local copy of block_buffer_tail, because the interrupt can alter it
-    // Is a critical section REALLY needed for a single byte change?
-    //CRITICAL_SECTION_START;
-    uint8_t tail = block_buffer_tail;
-    //CRITICAL_SECTION_END
-    tail = BLOCK_MOD(tail+2);
-
-    uint8_t b = BLOCK_MOD(block_buffer_head);
-    while (b != tail) {
-      if (block[0] && TEST(block[0]->flag, BLOCK_BIT_START_FROM_FULL_HALT)) break;
-      b = prev_block_index(b);
-      block[1] = block[0];
-      block[0] = &block_buffer[b];
-      reverse_pass_kernel(block[0], block[1]); // current, next
-    }
+    do {
+      block_t* next = current;
+      blocknr = prev_block_index(blocknr);
+      current = &block_buffer[blocknr];
+      if(TEST(current->flag, BLOCK_BIT_START_FROM_FULL_HALT)) //before of that every block is already optimized.
+        break;
+      reverse_pass_kernel(current, next);
+    } while (blocknr != endnr);
   }
 }
 
@@ -365,8 +359,8 @@ void Planner::recalculate_trapezoids() {
       // Recalculate if current block entry or exit junction speed has changed.
       if (TEST(current->flag, BLOCK_BIT_RECALCULATE) || TEST(next->flag, BLOCK_BIT_RECALCULATE)) {
         // NOTE: Entry and exit factors always > 0 by all previous logic operations.
-        float nom = current->nominal_speed;
-        calculate_trapezoid_for_block(current, current->entry_speed / nom, next->entry_speed / nom);
+        float nom = 1.0 / current->nominal_speed;
+        calculate_trapezoid_for_block(current, current->entry_speed * nom, next->entry_speed * nom);
         CBI(current->flag, BLOCK_BIT_RECALCULATE); // Reset current only to ensure next trapezoid is computed
       }
     }
@@ -374,8 +368,8 @@ void Planner::recalculate_trapezoids() {
   }
   // Last/newest block in buffer. Exit speed is set with MINIMUM_PLANNER_SPEED. Always recalculated.
   if (next) {
-    float nom = next->nominal_speed;
-    calculate_trapezoid_for_block(next, next->entry_speed / nom, (MINIMUM_PLANNER_SPEED) / nom);
+    float nom = 1.0 / next->nominal_speed;
+    calculate_trapezoid_for_block(next, next->entry_speed * nom, (MINIMUM_PLANNER_SPEED) * nom);
     CBI(next->flag, BLOCK_BIT_RECALCULATE);
   }
 }
