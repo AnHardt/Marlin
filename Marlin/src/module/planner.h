@@ -369,6 +369,8 @@ class Planner {
      */
     static void _buffer_steps(const int32_t (&target)[XYZE], float fr_mm_s, const uint8_t extruder);
 
+    static void debug_plan(uint8_t blocknr);
+
     /**
      * Planner::_buffer_line
      *

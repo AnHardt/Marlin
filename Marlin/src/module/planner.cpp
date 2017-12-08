@@ -224,6 +224,8 @@ void Planner::calculate_trapezoid_for_block(block_t* const block, const float &e
           // Steps between acceleration and deceleration, if any
           plateau_steps = block->step_event_count - accelerate_steps - decelerate_steps;
 
+  SERIAL_ECHO("^"); 
+  SERIAL_ECHO(((int32_t)block-(int32_t)&block_buffer)/sizeof(block_t)); 
   // Does accelerate_steps + decelerate_steps exceed step_event_count?
   // Then we can't possibly reach the nominal rate, there will be no cruising.
   // Use intersection_distance() to calculate accel / braking time in order to
@@ -260,6 +262,10 @@ void Planner::calculate_trapezoid_for_block(block_t* const block, const float &e
 // The kernel called by recalculate() when scanning the plan from last to first entry.
 void Planner::reverse_pass_kernel(block_t* const current, const block_t *next) {
   if (!current || !next) return;
+  SERIAL_ECHO("<"); 
+  SERIAL_ECHO(((int32_t)current-(int32_t)&block_buffer)/sizeof(block_t)); 
+  SERIAL_ECHO("-"); 
+  SERIAL_ECHO(((int32_t)next-(int32_t)&block_buffer)/sizeof(block_t)); 
   // If entry speed is already at the maximum entry speed, no need to recheck. Block is cruising.
   // If not, block in state of acceleration or deceleration. Reset entry speed to maximum and
   // check for maximum allowable speed reductions to ensure maximum possible planned speed.
@@ -279,26 +285,20 @@ void Planner::reverse_pass_kernel(block_t* const current, const block_t *next) {
  * Once in reverse and once forward. This implements the reverse pass.
  */
 void Planner::reverse_pass() {
-
   if (movesplanned() > 3) {
+    uint8_t endnr = BLOCK_MOD(block_buffer_tail + 2); //tail is running. tail+1 should not be altered because it's connected to the running block.
+                                                      // tail+2 because the index is not already advanced when checked
+    uint8_t blocknr = prev_block_index(block_buffer_head);
+    block_t* current = &block_buffer[blocknr];
 
-    block_t* block[3] = { NULL, NULL, NULL };
-
-    // Make a local copy of block_buffer_tail, because the interrupt can alter it
-    // Is a critical section REALLY needed for a single byte change?
-    //CRITICAL_SECTION_START;
-    uint8_t tail = block_buffer_tail;
-    //CRITICAL_SECTION_END
-
-    uint8_t b = BLOCK_MOD(block_buffer_head - 3);
-    while (b != tail) {
-      if (block[0] && TEST(block[0]->flag, BLOCK_BIT_START_FROM_FULL_HALT)) break;
-      b = prev_block_index(b);
-      block[2] = block[1];
-      block[1] = block[0];
-      block[0] = &block_buffer[b];
-      reverse_pass_kernel(block[1], block[2]);
-    }
+    do {
+      block_t* next = current;
+      blocknr = prev_block_index(blocknr);
+      current = &block_buffer[blocknr];
+      if(TEST(current->flag, BLOCK_BIT_START_FROM_FULL_HALT)) //before of that every block is already optimized.
+        break;
+      reverse_pass_kernel(current, next);
+    } while (blocknr != endnr);
   }
 }
 
@@ -306,6 +306,10 @@ void Planner::reverse_pass() {
 void Planner::forward_pass_kernel(const block_t* previous, block_t* const current) {
   if (!previous) return;
 
+  SERIAL_ECHO(">"); 
+  SERIAL_ECHO(((int32_t)previous-(int32_t)&block_buffer)/sizeof(block_t)); 
+  SERIAL_ECHO("-"); 
+  SERIAL_ECHO(((int32_t)current-(int32_t)&block_buffer)/sizeof(block_t)); 
   // If the previous block is an acceleration block, but it is not long enough to complete the
   // full speed change within the block, we need to adjust the entry speed accordingly. Entry
   // speeds have already been reset, maximized, and reverse planned by reverse planner.
@@ -355,8 +359,8 @@ void Planner::recalculate_trapezoids() {
       // Recalculate if current block entry or exit junction speed has changed.
       if (TEST(current->flag, BLOCK_BIT_RECALCULATE) || TEST(next->flag, BLOCK_BIT_RECALCULATE)) {
         // NOTE: Entry and exit factors always > 0 by all previous logic operations.
-        float nom = current->nominal_speed;
-        calculate_trapezoid_for_block(current, current->entry_speed / nom, next->entry_speed / nom);
+        float nom = 1.0 / current->nominal_speed;
+        calculate_trapezoid_for_block(current, current->entry_speed * nom, next->entry_speed * nom);
         CBI(current->flag, BLOCK_BIT_RECALCULATE); // Reset current only to ensure next trapezoid is computed
       }
     }
@@ -364,8 +368,8 @@ void Planner::recalculate_trapezoids() {
   }
   // Last/newest block in buffer. Exit speed is set with MINIMUM_PLANNER_SPEED. Always recalculated.
   if (next) {
-    float nom = next->nominal_speed;
-    calculate_trapezoid_for_block(next, next->entry_speed / nom, (MINIMUM_PLANNER_SPEED) / nom);
+    float nom = 1.0 / next->nominal_speed;
+    calculate_trapezoid_for_block(next, next->entry_speed * nom, (MINIMUM_PLANNER_SPEED) * nom);
     CBI(next->flag, BLOCK_BIT_RECALCULATE);
   }
 }
@@ -395,8 +399,11 @@ void Planner::recalculate_trapezoids() {
  *   3. Recalculate "trapezoids" for all blocks.
  */
 void Planner::recalculate() {
+  SERIAL_ECHO("\nR\n"); for (uint8_t b = block_buffer_tail; b != block_buffer_head; b = next_block_index(b)) debug_plan(b); 
   reverse_pass();
+  SERIAL_ECHO("\nF\n"); for (uint8_t b = block_buffer_tail; b != block_buffer_head; b = next_block_index(b)) debug_plan(b); 
   forward_pass();
+  SERIAL_ECHO("\nT\n"); for (uint8_t b = block_buffer_tail; b != block_buffer_head; b = next_block_index(b)) debug_plan(b); 
   recalculate_trapezoids();
 }
 
@@ -1368,6 +1375,48 @@ void Planner::_buffer_steps(const int32_t (&target)[XYZE], float fr_mm_s, const 
 
 } // _buffer_steps()
 
+void Planner::debug_plan(uint8_t blocknr) { 
+  SERIAL_ECHO_START(); 
+  SERIAL_ECHO((int)blocknr); 
+  SERIAL_ECHO(":"); 
+  SERIAL_ECHO((int)movesplanned()); 
+  SERIAL_ECHO(";"); 
+  if (TEST((&block_buffer[blocknr])->flag, BLOCK_BIT_BUSY)) 
+    SERIAL_ECHO("X"); 
+  else 
+    SERIAL_ECHO(" "); 
+  if (TEST((&block_buffer[blocknr])->flag, BLOCK_BIT_START_FROM_FULL_HALT)) 
+    SERIAL_ECHO("/"); 
+  else 
+    SERIAL_ECHO(" "); 
+  if (TEST((&block_buffer[blocknr])->flag, BLOCK_BIT_NOMINAL_LENGTH)) 
+    SERIAL_ECHO("-"); 
+  else 
+    SERIAL_ECHO(" "); 
+  if (TEST((&block_buffer[blocknr])->flag, BLOCK_BIT_RECALCULATE)) 
+    SERIAL_ECHO("*"); 
+  else 
+    SERIAL_ECHO(" ");
+  SERIAL_ECHO("T");
+  SERIAL_ECHO((&block_buffer[blocknr])->initial_rate); 
+  SERIAL_ECHO(","); 
+  SERIAL_ECHO((&block_buffer[blocknr])->nominal_rate); 
+  SERIAL_ECHO(","); 
+  SERIAL_ECHO((&block_buffer[blocknr])->final_rate); 
+  //SERIAL_ECHO(","); 
+  //SERIAL_ECHO((&block_buffer[blocknr])->acceleration_steps_per_s2); 
+  SERIAL_ECHO(";S"); 
+  SERIAL_ECHO((&block_buffer[blocknr])->step_event_count); 
+  SERIAL_ECHO(","); 
+  SERIAL_ECHO((&block_buffer[blocknr])->accelerate_until); 
+  SERIAL_ECHO(","); 
+  SERIAL_ECHO((&block_buffer[blocknr])->decelerate_after); 
+  //SERIAL_ECHO(","); 
+  //SERIAL_ECHO((&block_buffer[blocknr])->acceleration_rate); 
+
+  SERIAL_ECHO("\n"); 
+} 
+
 /**
  * Planner::_buffer_line
  *
@@ -1436,12 +1485,16 @@ void Planner::_buffer_line(const float &a, const float &b, const float &c, const
     DISABLE_STEPPER_DRIVER_INTERRUPT();
     _buffer_steps(between, fr_mm_s, extruder);
     const uint8_t next = block_buffer_head;
+    SERIAL_ECHO(","); 
     _buffer_steps(target, fr_mm_s, extruder);
     SBI(block_buffer[next].flag, BLOCK_BIT_CONTINUED);
+    SERIAL_ECHO("\n"); for (uint8_t b = block_buffer_tail; b != block_buffer_head; b = next_block_index(b)) debug_plan(b); 
     ENABLE_STEPPER_DRIVER_INTERRUPT();
   }
-  else
+  else {
     _buffer_steps(target, fr_mm_s, extruder);
+    SERIAL_ECHO("\n"); for (uint8_t b = block_buffer_tail; b != block_buffer_head; b = next_block_index(b)) debug_plan(b); 
+  }
 
   stepper.wake_up();
 
