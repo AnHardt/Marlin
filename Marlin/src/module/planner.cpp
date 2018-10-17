@@ -2064,12 +2064,13 @@ bool Planner::_populate_block(block_t * const block, bool split_move,
   // Calculate and limit speed in mm/sec for each axis
   float current_speed[NUM_AXIS], speed_factor = 1.0f; // factor <1 decreases speed
   LOOP_XYZE(i) {
-    #if ENABLED(MIXING_EXTRUDER) && ENABLED(RETRACT_SYNC_MIXING)
+    #if ENABLED(MIXING_EXTRUDER)
       // In worst case, only one extruder running, no change is needed.
       // In best case, all extruders run the same amount, we can divide by MIXING_STEPPERS
       float delta_mm_i = 0;
-      if (i == E_AXIS && mixer.get_current_v_tool() == MIXER_AUTORETRACT_TOOL)
-        delta_mm_i = delta_mm[i] / MIXING_STEPPERS;
+      if (i == E_AXIS)
+        // for calculating the limits fake speed to be somewhere between speed * 1.0 and speed * 1/MIXING_STEPPERS
+        delta_mm_i = delta_mm[i] * mixer.get_current_speed_corection_factor();
       else
         delta_mm_i = delta_mm[i];
     #else

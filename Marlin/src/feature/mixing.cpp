@@ -37,6 +37,7 @@ Mixer mixer;
 uint_fast8_t  Mixer::selected_v_tool = 0;
 float         Mixer::M163_collector[MIXING_STEPPERS]; // mix proportion. 0.0 = off, otherwise <= COLOR_A_MASK.
 mixer_color_t Mixer::color[NR_MIXING_VIRTUAL_TOOLS][MIXING_STEPPERS];
+float         Mixer::speed_corection_factor[NR_MIXING_VIRTUAL_TOOLS];
 
 // Used in Stepper
 int_fast8_t   Mixer::runner = 0;
@@ -45,14 +46,10 @@ mixer_accu_t  Mixer::accu[MIXING_STEPPERS] = { 0 };
 
 void Mixer::normalize(const uint8_t tool_index) {
   float cmax = 0;
-  #ifdef MIXER_NORMALIZER_DEBUG
-    float csum = 0;
-  #endif
+  float csum = 0;
   MIXER_STEPPER_LOOP(i) {
     cmax = max(cmax, M163_collector[i]);
-    #ifdef MIXER_NORMALIZER_DEBUG
-      csum += M163_collector[i];
-    #endif
+    csum += M163_collector[i];
   }
   #ifdef MIXER_NORMALIZER_DEBUG
     SERIAL_ECHOPGM("Mixer: Relation before normalizing: [ ");
@@ -67,6 +64,7 @@ void Mixer::normalize(const uint8_t tool_index) {
   const float inverse_max = RECIPROCAL(cmax);
   MIXER_STEPPER_LOOP(i)
     color[tool_index][i] = M163_collector[i] * COLOR_A_MASK * inverse_max;
+  speed_corection_factor[tool_index] = cmax/csum;
 
   #ifdef MIXER_NORMALIZER_DEBUG
     csum = 0;
@@ -90,21 +88,26 @@ void Mixer::normalize(const uint8_t tool_index) {
 void Mixer::init( void ) {
   // Virtual Tools 0, 1, 2, 3 = Filament 1, 2, 3, 4, etc.
   // Every virtual tool gets a pure filament
-  for (uint8_t t = 0; t < MIXING_VIRTUAL_TOOLS && t < MIXING_STEPPERS; t++)
+  for (uint8_t t = 0; t < MIXING_VIRTUAL_TOOLS && t < MIXING_STEPPERS; t++) {
     MIXER_STEPPER_LOOP(i)
       color[t][i] = (t == i) ? COLOR_A_MASK : 0;
+    speed_corection_factor[t] = 1.0f;
+  }
 
   // Remaining virtual tools are 100% filament 1
   #if MIXING_STEPPERS < MIXING_VIRTUAL_TOOLS
-    for (uint8_t t = MIXING_STEPPERS; t < MIXING_VIRTUAL_TOOLS; t++)
+    for (uint8_t t = MIXING_STEPPERS; t < MIXING_VIRTUAL_TOOLS; t++) {
       MIXER_STEPPER_LOOP(i)
         color[t][i] = (i == 0) ? COLOR_A_MASK : 0;
+      speed_corection_factor[t] = 1.0f;
+    }
   #endif
 
   #if ENABLED(RETRACT_SYNC_MIXING)
     // AUTORETRACT_TOOL gets the same amount of all filaments
     MIXER_STEPPER_LOOP(i)
       color[MIXER_AUTORETRACT_TOOL][i] = COLOR_A_MASK;
+    speed_corection_factor[t] = 1.0f/MIXING_STEPPERS;
   #endif
 
   ZERO(M163_collector);

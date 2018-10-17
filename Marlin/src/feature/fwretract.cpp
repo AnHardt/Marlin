@@ -132,7 +132,7 @@ void FWRetract::retract(const bool retracting
               unscale_e = RECIPROCAL(planner.e_factor[active_extruder]),
               unscale_fr = 100.0 / feedrate_percentage, // Disable feedrate scaling for retract moves
               base_retract = (
-                (swapping ? settings.swap_retract_length : settings.retract_length)
+                (swapping ? settings.swap_retract_length : settings.retract_length) // way
                 #if ENABLED(RETRACT_SYNC_MIXING)
                   * (MIXING_STEPPERS)
                 #endif
@@ -149,7 +149,7 @@ void FWRetract::retract(const bool retracting
   if (retracting) {
     // Retract by moving from a faux E position back to the current E position
     feedrate_mm_s = (
-      settings.retract_feedrate_mm_s * unscale_fr
+      settings.retract_feedrate_mm_s * unscale_fr // speed. So (MIXING_STEPPERS * way) / (MIXING_STEPPERS * speed) is the same time [m/(m/s) = s]
       #if ENABLED(RETRACT_SYNC_MIXING)
         * (MIXING_STEPPERS)
       #endif

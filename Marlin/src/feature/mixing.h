@@ -63,6 +63,7 @@ class Mixer {
   FORCE_INLINE static uint8_t get_current_v_tool(void) { return selected_v_tool; }
   FORCE_INLINE static void T(const uint_fast8_t c) { selected_v_tool = c; }
   FORCE_INLINE static void set_M163_collector(const uint8_t c, const float f) { M163_collector[c] = f; }
+  FORCE_INLINE static float get_current_speed_corection_factor(void) { return speed_corection_factor[selected_v_tool]; }
 
   // Used when dealing with blocks
   FORCE_INLINE static void populate_block(mixer_color_t b_color[]) {
@@ -96,6 +97,7 @@ class Mixer {
   static uint_fast8_t  selected_v_tool;
   static float         M163_collector[MIXING_STEPPERS];
   static mixer_color_t color[NR_MIXING_VIRTUAL_TOOLS][MIXING_STEPPERS];
+  static float         speed_corection_factor[NR_MIXING_VIRTUAL_TOOLS];
 
   // Used in Stepper
   static int_fast8_t   runner;
