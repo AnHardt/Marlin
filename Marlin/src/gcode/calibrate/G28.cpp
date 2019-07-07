@@ -361,7 +361,10 @@ void GcodeSuite::G28(const bool always_home_all) {
           bltouch.init();
         #endif
         #if ENABLED(Z_SAFE_HOMING)
-          home_z_safely();
+          if (home_all)
+            home_z_safely();
+          else
+            homeaxis(Z_AXIS);
         #else
           homeaxis(Z_AXIS);
         #endif
