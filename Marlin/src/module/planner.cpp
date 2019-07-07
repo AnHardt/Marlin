@@ -1841,7 +1841,11 @@ bool Planner::_populate_block(block_t * const block, bool split_move,
   block->step_event_count = _MAX(block->steps[A_AXIS], block->steps[B_AXIS], block->steps[C_AXIS], esteps);
 
   // Bail if this is a zero-length block
-  if (block->step_event_count < MIN_STEPS_PER_SEGMENT) return false;
+  if (block->step_event_count < MIN_STEPS_PER_SEGMENT) {
+    SERIAL_ECHOPGM("D"); // for a 'dropped' block
+    return false;
+  }
+  else SERIAL_ECHOPGM("U"); // for a 'used' block  
 
   #if ENABLED(MIXING_EXTRUDER)
     MIXER_POPULATE_BLOCK();
