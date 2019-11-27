@@ -175,7 +175,7 @@ const int SPI_Devices[][7] = {
 //                  NR.           Order   PIN        (SD only) (SD only)
   {DEVTYPE_SD     ,   0,      NC,      NC,     PA4,      PB11, LOW    }, //NC = not change: it's the only device on bus, just use the default
   {DEVTYPE_SD     ,   1, SPI_LTS, SPI_MSB,    PB12,      PF12, ExtSDLV},
-  {DEVTYPE_SD     ,   2, SPI_LTS, SPI_MSB,    PA15,        NC, NC     }, //optional external SD on SPI3
+  //{DEVTYPE_SD     ,   2, SPI_LTS, SPI_MSB,    PA15,        NC, NC     }, //optional external SD on SPI3
 #if HAS_SPI_LCD
   {DEVTYPE_DISPLAY,   1, SPI_LTS, SPI_MSB,    PD11,        NC, NC     },
 #endif
@@ -208,7 +208,7 @@ const int SPI_Devices[][7] = {
 #define NUM_SPI_DEVICES (sizeof(SPI_Devices) / sizeof(SPI_Devices[0])) //easier than defining it beforehand
 
 #ifndef SD_SEARCH_ORDER
-  #define SD_SEARCH_ORDER { 1, 0, 2 }
+  #define SD_SEARCH_ORDER { 1, 0}
 #endif
 
 //
